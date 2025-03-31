@@ -1,6 +1,7 @@
 # files to ignore in this repo
 #inputs/
 #outputs/
+test.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
