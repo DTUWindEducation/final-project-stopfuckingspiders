@@ -1,0 +1,8 @@
+DATA_FOLDER: inputs
+AIRFOIL_DATA_FOLDER: airfoils
+RESULTS_FOLDER: output
+REFERENCE_WIND_TURBINE: IEA-15-240-RWT
+
+AIRFOIL_DATA: IEA-15-240-RWT_AeroDyn15_blade.dat
+
+# Vars for the script
