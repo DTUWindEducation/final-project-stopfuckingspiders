@@ -11,7 +11,7 @@ import re
 from typing import Union
 from pathlib import Path
 
-import WindTurbineModeling.read_data as WTMread
+import WindTurbineModeling.read as WTMread
 
 
 #%% Functions
