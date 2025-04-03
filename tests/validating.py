@@ -1,4 +1,4 @@
-import WindTurbineModeling.read_data as WTMread
+import WindTurbineModeling.read as WTMread
 
 from typing import Union
 from pathlib import Path
