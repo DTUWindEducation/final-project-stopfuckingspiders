@@ -1,6 +1,9 @@
 # files to ignore in this repo
 #inputs/
 #outputs/
+*test.py
+TASK.md
+.vscode/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
