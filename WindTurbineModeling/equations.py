@@ -1,21 +1,36 @@
-def calc_flow_angle(axial_induction, tangential_induction, 
-               inflow_wind_speed, rot_speed, span_position):
-    
-    numerator = (1 - axial_induction) * inflow_wind_speed
-    denominator = (1 + tangential_induction) * rot_speed * span_position
-    
-    flow_angle = np.arctan(numerator / denominator)
+import numpy as np
 
-    return flow_angle
+def calc_flow_angle(a, a_prime, V_0, omega, r):
+    """
+    phi [deg]:      Flow angle
+    a [?]:          Axial induction factor
+    a_prime [?]:    Tangential induction factor
+    V_0 [m/s]:      Inflow wind speed
+    omega [1/s]:    Rotational speed
+    r [m]:          Span position
+    """
 
-def calc_local_angle_of_attack(flow_angle, blade_pitch_angle, r):
-    
-    twist_angle = calc_twist_angle(r)
-    
-    local_angle_of_attack = flow_angle  - (blade_pitch_angle + 
-                                           twist_angle)
-    local_angle_of_attack = 0
-    return local_angle_of_attack
+    # Calculate the flow angle using the given formula
+    # phi = arctan((1-a)*V_0 / ((1+a')*omega*r))
+    numerator = (1 - a) * V_0
+    denominator = (1 + a_prime) * omega * r
+    phi = np.arctan(numerator / denominator)
+
+    return phi
+
+def calc_local_angle_of_attack(phi, theta_p, r):
+    """
+    alpha [deg]: local angle of attack
+    phi [deg]: Flow angle
+    theta_p [deg]: Blade_pitch_angle
+    beta [deg]: local twist angle
+    r [m]: Span position
+    """
+
+    beta = calc_twist_angle(r)
+    alpha = phi  - (theta_p + beta)
+
+    return alpha
 
 # Local solidity (sigma)
 def calc_local_solidity(r, B):
