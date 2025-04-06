@@ -8,9 +8,8 @@ import re
 from typing import Union
 from pathlib import Path
 
-# For configuration
+#%% List of Global Variables defined in the config file:
 from config import *
-#%% List of Global Variables:
 # DATA_PATH
 # REFERENCE_WIND_TURBINE_PATH
 # BLADE_DEFINITION_INPUT_FILE_PATH # input file for blade geometry
@@ -22,10 +21,7 @@ from config import *
 # R
 # RHO
 
-
-# Load module
-from src import *
-# I (dorian) used an folder with the init etc.
+#%% Load Wind Turbine Model Module
 from WindTurbineModeling.read import *
 from WindTurbineModeling.load import *
 from WindTurbineModeling.plot import *
@@ -35,55 +31,37 @@ from WindTurbineModeling.plot import *
 def main():
     pass
 
-#%% Read Data
-# Blade geometry (chord, twist, airfoil data along the span)
-
-# Operational conditions (wind speed, rotor speed, pitch angle)
-
-
 #%% Test for main
 if __name__ == "__main__":
     pass
 
+#%% ---------- LOAD DATA ----------
+# -- Blade Data Input --
+dfs_blade_input_data = load_blade_geometry([BLADE_DEFINITION_INPUT_FILE_PATH])
+# Since we only have one input file.
+df_blade_input_data = dfs_blade_input_data[0] 
 
-#%% My (dorian) code
-# ---------- LOAD DATA ----------
-blade_df = load_blade_geometry(BLADE_DEFINITION_INPUT_FILE_PATH)
-df_strategy = load_operational_strategy(OPERATIONAL_CONDITIONS_FILE_PATH)
+# -- Operational Settings --
+df_settings = load_operational_settings(OPERATIONAL_CONDITIONS_FILE_PATH)
+#TODO Can be adjusted so that multiple setting can be loaded
 
-
+# -- Aerodynamic Properties --
+# Load all files in a list with the aerodynamic properties (geometry and coefficients)
 airfoil_files = get_files_by_extension(AIRFOIL_DATA, [".dat", ".txt"])
-airfoil_shape_paths = [f for f in airfoil_files if AIRFOIL_SHAPE_IDENTIFIER in str(f)]
-airfoil_info_paths = [f for f in airfoil_files if AIRFOIL_INFO_IDENTIFIER in str(f)]
 
-dfs_shape = load_all_shapes(airfoil_shape_paths)
-#all_polars = load_all_polars(airfoil_info_paths)
+# -- Airfoil Shape (geometry) --
+# Create a list with all files describing the airfoil geometry
+airfoil_shape_paths = [f for f in airfoil_files if AIRFOIL_SHAPE_IDENTIFIER in str(f)]
+# Get a list of dataframes with the airfoil geometries
+dfs_geometry = load_geometry(airfoil_shape_paths)
+
+# -- Aerodynamic Coefficients --
+# Create a list with all files describing the airfoil coefficients
+airfoil_info_paths = [f for f in airfoil_files if AIRFOIL_INFO_IDENTIFIER in str(f)]
+# Get a list of dict and a list of dataframes
+# dict: contain header information for the coefficient (only if unsteady aerodynamics data is included)
+# dataframe: contains the coefficients
+unsteady_aerodynamics_coefs, dfs_airfoil_aero_coef = load_airfoil_coefficients(airfoil_info_paths)
 
 # plot airfoil shapes
 #plot_airfoil_shapes(shape_data)
-
-
-
-
-#%%Stuff I copied:
-
-# # ---------- BASE PATH ----------
-# BASE_PATH = os.path.dirname(os.path.abspath(__file__))  # directory where main.py is located
-# INPUT_DIR = os.path.join(BASE_PATH, "inputs", "IEA-15-240-RWT")
-
-# # ---------- FILE PATHS ----------
-# BLADE_GEOM_PATH = os.path.join(INPUT_DIR, "IEA-15-240-RWT_AeroDyn15_blade.dat")
-# OPS_STRATEGY_PATH = os.path.join(INPUT_DIR, "IEA_15MW_RWT_Onshore.opt")
-# POLAR_FOLDER = os.path.join(INPUT_DIR, "Airfoils")
-# SHAPE_FOLDER = os.path.join(INPUT_DIR, "Airfoils")
-# ROTOR_RADIUS = 120  # meters
-# RHO = 1.225  # kg/m^3 (air density)
-
-# # ---------- LOAD DATA ----------
-# blade_df = load_blade_geometry(BLADE_GEOM_PATH)
-# shape_data = load_all_shapes(SHAPE_FOLDER)
-# strategy_df = load_operational_strategy(OPS_STRATEGY_PATH)
-# all_polars = load_all_polars(POLAR_FOLDER)
-
-# # plot airfoil shapes
-# plot_airfoil_shapes(shape_data)

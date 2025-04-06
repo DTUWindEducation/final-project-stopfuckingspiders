@@ -4,30 +4,46 @@ import matplotlib.pyplot as plt
 import os
 import re
 from io import StringIO
+import pandas as pd
+from typing import Union
+from pathlib import Path
 
-def load_blade_geometry(filepath):
+
+def load_blade_geometry(filepaths: list[Union[str, Path]]):
     """
-    Load blade geometry from AeroDyn15 file:
-    Extracts BlSpn, BlTwist, BlChord, and BlAFID.
+    Load blade nodal geometry from an AeroDyn15 blade input file.
+    Inputs from file:
+    - NumBlNds: Number of blade nodes (must match number of rows in table).
+    - BlSpn: Spanwise location from root [m], must start at 0 and increase.
+    - BlCrvAC: Out-of-plane offset of aerodynamic center [m], positive downwind.
+    - BlSwpAC: In-plane offset of aerodynamic center [m], positive opposite rotation.
+    - BlCrvAng: Angle of normal vector from airfoil plane due to curvature [deg].
+    - BlTwist: Local aerodynamic twist angle [deg], positive to feather.
+    - BlChord: Local chord length [m].
+    - BlAFID: Airfoil ID corresponding to entry in airfoil data table.
+    Each row in the file defines one node along the blade, from root to tip.
     """
-    df = pd.read_csv(
-        filepath,
-        sep='\s+',
-        skiprows=6,  # skip header, units, and metadata
-        header=None,
-        names=[
-            'BlSpn', 'BlCrvAC', 'BlSwpAC', 'BlCrvAng', 'BlTwist',
-            'BlChord', 'BlAFID', 'BlCb', 'BlCenBn', 'BlCenBt'
-        ]
-    )
 
-    # Select and cast relevant columns
-    blade_geom = df[['BlSpn', 'BlTwist', 'BlChord', 'BlAFID']]
-    blade_geom.loc[:, 'BlAFID'] = blade_geom['BlAFID'].astype(int)
+    results = []
+    for filepath in filepaths:
+        df = pd.read_csv(
+            filepath,
+            sep=r'\s+',
+            skiprows=6,  # skip header, units, and metadata
+            header=None,
+            names=[
+                'BlSpn', 'BlCrvAC', 'BlSwpAC', 'BlCrvAng', 'BlTwist',
+                'BlChord', 'BlAFID', 'BlCb', 'BlCenBn', 'BlCenBt'
+            ]
+        )
 
-    return blade_geom
+        # Select and cast relevant columns
+        blade_geom = df[['BlSpn', 'BlTwist', 'BlChord', 'BlAFID']]
+        blade_geom.loc[:, 'BlAFID'] = blade_geom['BlAFID'].astype(int)
+        results.append(blade_geom)
+    return results
 
-def load_operational_strategy(filepath):
+def load_operational_settings(filepath: Union[str, Path]):
     """
     Loads the operational strategy data, skipping the header line.
     """
@@ -40,65 +56,81 @@ def load_operational_strategy(filepath):
     )
     return df
 
-def load_airfoil_shape(filepath):
+def load_geometry(filepaths: list[Union[str, Path]]):
     """
     Load normalized airfoil shape coordinates from the airfoil shape file.
     """
-    data = np.loadtxt(filepath, skiprows=8)
-    return pd.DataFrame(data, columns=["x/c", "y/c"])
+    dfs = []
+    for filepath in filepaths: 
+        data = np.loadtxt(filepath, skiprows=8)
+        dfs.append(pd.DataFrame(data, columns=["x/c", "y/c"]))
+    return dfs
 
-def load_all_shapes(shape_dir_paths):
-    df_list = []
-    for shape_dir_path in shape_dir_paths:
-        try:
-            df = load_airfoil_shape(shape_dir_path)
-            df_list.append(df)
-        except Exception as e:
-            print(f'[Warning] Failed to load {shape_dir_path}:\n {e}')
-    return df_list
-
-import pandas as pd
-
-def load_airfoil_polars(filepaths, skiprows=55):
-    """
-    Load aerodynamic polar data from an AirfoilInfo file.
-    Handles files with variable number of columns.
-    """
-    df_list = []
+def load_airfoil_coefficients(filepaths: list[Union[str, Path]]):
+    
+    # init lists for return
+    headers = []
+    dfs = []
+    
     for filepath in filepaths:
-        try:
-            df = pd.read_csv(
-                filepath,
-                sep=r'\s+',
-                skiprows=skiprows,
-                header=None,
-                engine='python',
-                on_bad_lines='skip'  # skip malformed rows
-            )
+    
+        header_data = {}
+        table_data = []
+        with open(filepath, "r") as file:
+            lines = file.readlines()
 
-            if df.shape[1] < 3:
-                raise ValueError(f"[Error] Not enough columns in {filepath}.")
+        i = 0
+        while i < len(lines):
+            line = lines[i].strip()
+            if not line or line.startswith("!"):
+                i += 1
+                continue
 
-            df = df.iloc[:, :3]
-            df.columns = ['Alpha', 'Cl', 'Cd']
-            df_list.append(df)
+            parts = line.split("!")
+            data_part = parts[0].strip()
+            tokens = data_part.split()
+            if len(tokens) >= 2:
+                value = tokens[0]
+                key = tokens[1]
+                header_data[key] = value
 
-        except Exception as e:
-            print(f"[Warning] Failed to load {filepath}: {e}")
-            return None
-    return df_list
+            if "InclUAdata" in data_part:
+                if value.lower() == "true":
+                    i += 1
+                    # Read UA data lines until table header is found
+                    while not lines[i].strip().startswith("! Table of aerodynamics coefficients"):
+                        ua_line = lines[i].strip()
+                        if ua_line and not ua_line.startswith("!"):
+                            ua_parts = ua_line.split("!")
+                            ua_data = ua_parts[0].strip().split()
+                            if len(ua_data) >= 2:
+                                ua_value = ua_data[0]
+                                ua_key = ua_data[1]
+                                header_data[ua_key] = ua_value
+                        i += 1
+                else:
+                    while not lines[i].strip().startswith("! Table of aerodynamics coefficients"):
+                        i += 1
+            i += 1
+            if lines[i].strip().startswith("!    Alpha"):
+                i += 2
+                break
 
-def load_all_polars(folder):
-    polar_dict = {}
-    for i in range(50):
-        airfoil_id = i + 1
-        filename = f"IEA-15-240-RWT_AeroDyn15_Polar_{i:02d}.dat"
-        filepath = os.path.join(folder, filename)
+        while i < len(lines):
+            line = lines[i].strip()
+            if not line or line.startswith("!"):
+                i += 1
+                continue
+            parts = line.split()
+            row = [float(p) for p in parts]
+            table_data.append(row)
+            i += 1
 
-        # Use different skiprows if needed (based on inspection)
-        skiprows = 21 if i < 5 else 55
-        df = load_airfoil_polars(filepath, skiprows=skiprows)
-        if df is not None:
-            polar_dict[airfoil_id] = df
+        df = pd.DataFrame(table_data, columns=["Alpha (deg)", "Cl", "Cd", "Cm"])
 
-    return polar_dict
+        headers.append(header_data)
+        dfs.append(df)
+
+    return headers, dfs
+
+
