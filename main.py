@@ -1,7 +1,12 @@
+from time import time
+start = time()
+
 import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+
+from scipy.integrate import simps
 
 #For Functions
 import re
@@ -21,12 +26,13 @@ from config import *
 # AIRFOIL_INFO_IDENTIFIER
 # R
 # RHO
+# B
 
 #%% Load Wind Turbine Model Module
 from WindTurbineModeling.read import *
 from WindTurbineModeling.load import *
 from WindTurbineModeling.plot import *
-
+from WindTurbineModeling.equations import *
 #%% -- FUNCTIONS --
 
 # - Main -
@@ -65,4 +71,102 @@ airfoil_info_paths = [f for f in airfoil_files if AIRFOIL_INFO_IDENTIFIER in str
 # dataframe: contains the coefficients
 unsteady_aerodynamics_coefs, dfs_airfoil_aero_coef = load_airfoil_coefficients(airfoil_info_paths)
 
-#%% -- DO DATA --
+df_airfoil_aero_coef = dfs_airfoil_aero_coef[0]
+
+#%% Define boundary conditions:
+# Radius: r [m]
+r = 1
+
+# Delta r: dr [m]
+dr = 0.1
+
+# Inflow wind speed: V_0 [m/s]
+V_0 = df_settings['WindSpeed']
+V_0.name = 'WindSpeed (V_0)[m/s]'
+
+# Blade pitch angle: theta_p [deg]
+theta_p = df_settings['PitchAngle']
+theta_p.name = 'BladePitchAngle (theta_p)[deg]'
+
+#Rotational speed: omega [rpm] -> [1/s]
+omega = df_settings['RotSpeed']/60
+omega.name = 'RotSpeed (omega)[1/s]'
+
+BlSpn = df_blade_input_data['BlSpn']
+BlTwist = df_blade_input_data['BlTwist']
+BlChord = df_blade_input_data['BlChord']
+
+# Interpolate
+# - Blade Twist
+loc_BlTwist = np.interp(r, BlSpn, BlTwist) #[deg]
+# - Chord Length: c [m]
+c = loc_BlTwist = np.interp(r, BlSpn, BlChord) #[deg]
+
+# Local Solidity: sigma [?]
+sigma = calc_local_solidity(r, c, B)
+
+#%% 1. - Initialize induction factors
+# Axial induction factors: a [?]
+a = 0
+
+# Tangential induction factors: a_prime [?]
+a_prime = 0
+
+#%% 2. Compute flow angle 
+# Flow Angle: phi [deg]
+
+phi = calc_flow_angle(a, a_prime, V_0, omega, r)
+phi.name = 'FlowAngle (phi)[deg]'
+
+#%% 3. Compute local angle of attack
+# Local Angle of Attack: alpha [deg]
+
+# 3.b calc local angle of attack
+alpha = calc_local_angle_of_attack(phi, theta_p, loc_BlTwist)
+alpha.name = 'LocAngleAttack (alpha)[deg]'
+
+#%% 4. Compute local lift and drag force
+# Drag Force: C_d [-]
+# Lift Force: C_l [-]
+
+C_d, C_l = calc_local_lift_drag_force(alpha, df_airfoil_aero_coef)
+
+#%% 5.Compute 
+# TODO what is C_n and C_t
+# TODO need to create a function for those values
+# TODO Check if phi must be in [deg] or [red]
+
+# ???: C_n [-]
+C_n = C_l * np.cos(phi) + C_d * np.sin(phi)
+C_n.name = 'Name (C_n)[deg]'
+
+# ???: C_t [-]
+C_t = C_l * np.sin(phi) + C_d * np.cos(phi)
+C_t.name = 'Name (C_t)[deg]'
+
+#%% 6. Update induction factors
+# Axial induction factors: a [?]
+denominator = (4 * np.sin(phi)**2) / ((sigma*C_n)+1)
+a = 1/(denominator)
+a.name = 'Axial induction factors (a)[-]'
+
+# Tangential induction factors: a_prime [?]
+denominator = (4 * np.sin(phi)* np.cos(phi)) / ((sigma*C_t)-1)
+a_prime = 1/(denominator)
+a_prime.name = 'Tangential induction factors (a_prime)[-]'
+
+#%% 7. Check for tolerance
+# TODO check to tolerance and build in "go back..." 
+
+#%% 8. Compute local Contribution
+# TODO
+# Local Thrust Contribution: loc_dT [?]
+ 
+
+# Local Torque Contribution: loc_dM [?]
+
+
+#%% END of script
+
+end = time()
+print(f"Execution time: {end - start:.4f} seconds")
