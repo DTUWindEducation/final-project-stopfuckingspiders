@@ -203,7 +203,45 @@ dT = 4*np.pi * r * RHO * V_0**2 * a * (1-a) * dr
 
 # Local Torque Contribution: loc_dM [?]
 # TODO please validate
-#dM = 4*np.pi * r**3 * RHO * V_0**2 * omega * a_prime (1-a_prime) * dr
+dM = 4*np.pi * r**3 * RHO * V_0 * omega * a_prime * (1-a) * dr
+
+#%%
+#***** FROM GPT
+# Convert r to Series for element-wise ops
+
+# Ensure r is a numpy array
+r_s = np.asarray(r_s)
+
+# Create r_series indexed by radius
+r_series = pd.Series(data=r_s, index=r_s)
+
+# Compute differential thrust and torque as Series
+dT = 4 * np.pi * r_series * RHO * V_0**2 * a * (1 - a) * dr
+dM = 4 * np.pi * r_series**3 * RHO * V_0 * omega * a_prime * (1 - a) * dr
+
+#%%
+# Integrate (sum) to get total thrust and torque
+T = dT.sum()
+M = dM.sum()
+
+# Power
+P = (omega * dM / dr).sum()  # more accurate than M.mean() * omega.mean() when omega varies
+
+# Rotor disk area
+A = np.pi * R**2
+
+# Coefficients (using mean V_0)
+V0_mean = V_0.mean()
+C_T = T / (0.5 * RHO * A * V0_mean**2)
+C_P = P / (0.5 * RHO * A * V0_mean**3)
+
+# Print results
+print(f"Thrust (T): {T:.2f} N")
+print(f"Torque (M): {M:.2f} Nm")
+print(f"Power (P): {P:.2f} W")
+print(f"Thrust Coefficient (C_T): {C_T:.4f}")
+print(f"Power Coefficient (C_P): {C_P:.4f}")
+
 
 #%% END of script
 
