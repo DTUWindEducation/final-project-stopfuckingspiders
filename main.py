@@ -5,6 +5,7 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import xarray as xr
 
 from scipy.integrate import simps
 
@@ -28,7 +29,23 @@ from config import *
 # RHO
 # B
 
+from dataclasses import dataclass
+@dataclass
+class BoundaryConditions:
+    dr: float
+    r: float
+    r_s: np.ndarray
+    V_0: pd.Series
+    theta_p: pd.Series
+    omega: pd.Series
+    BlSpn: pd.Series
+    BlTwist: pd.Series
+    BlChord: pd.Series
+    a0: pd.Series
+    a0_prime: pd.Series
+
 #%% Load Wind Turbine Model Module
+from WindTurbineModeling import *
 from WindTurbineModeling.read import *
 from WindTurbineModeling.load import *
 from WindTurbineModeling.plot import *
@@ -74,12 +91,12 @@ unsteady_aerodynamics_coefs, dfs_airfoil_aero_coef = load_airfoil_coefficients(a
 df_airfoil_aero_coef = dfs_airfoil_aero_coef[0]
 
 #%% Define boundary conditions:
-# Radius: r [m]
-r = 1
-
 # Delta r: dr [m]
 dr = 0.1
-
+# Radius: r [m], list r_s [m]
+# list from 0 to R with dr increments
+r_s = np.arange(0, R+dr, dr)
+r = 1
 # Inflow wind speed: V_0 [m/s]
 V_0 = df_settings['WindSpeed']
 V_0.name = 'WindSpeed (V_0)[m/s]'
@@ -96,14 +113,6 @@ BlSpn = df_blade_input_data['BlSpn']
 BlTwist = df_blade_input_data['BlTwist']
 BlChord = df_blade_input_data['BlChord']
 
-# Interpolate
-# - Blade Twist
-loc_BlTwist = np.interp(r, BlSpn, BlTwist) #[deg]
-# - Chord Length: c [m]
-c = loc_BlTwist = np.interp(r, BlSpn, BlChord) #[deg]
-
-# Local Solidity: sigma [?]
-sigma = calc_local_solidity(r, c, B)
 
 #%% 1. - Initialize induction factors
 # Axial induction factors: a [?]
@@ -112,12 +121,38 @@ a = 0
 # Tangential induction factors: a_prime [?]
 a_prime = 0
 
+#%% Create dict with boudary conditions
+
+BC = BoundaryConditions(
+    dr=dr,
+    r=r,
+    r_s=r_s,
+    V_0=V_0,
+    theta_p=theta_p,
+    omega=omega,
+    BlSpn=BlSpn,
+    BlTwist=BlTwist,
+    BlChord=BlChord,
+    a0=a,
+    a0_prime=a_prime
+)
+
+#%% Interpolate
+# - Blade Twist
+loc_BlTwist = np.interp(r, BlSpn, BlTwist) #[deg]
+# - Chord Length: c [m]
+c = loc_BlTwist = np.interp(r, BlSpn, BlChord) #[deg]
+
+# Local Solidity: sigma [?]
+sigma = calc_local_solidity(r, c, B)
+
 #%% 2. Compute flow angle 
 # Flow Angle: phi [deg]
+# Flow anlge phi_xr is a 2D-Array with results of phi(r) for each r
 
-phi = calc_flow_angle(a, a_prime, V_0, omega, r)
-phi.name = 'FlowAngle (phi)[deg]'
-
+phi_xr = get_flow_angle(BC)
+r = 1
+phi = phi_xr[:,0].values
 #%% 3. Compute local angle of attack
 # Local Angle of Attack: alpha [deg]
 
@@ -158,13 +193,17 @@ a_prime.name = 'Tangential induction factors (a_prime)[-]'
 #%% 7. Check for tolerance
 # TODO check to tolerance and build in "go back..." 
 
-#%% 8. Compute local Contribution
-# TODO
+#%% 8. Compute local contribution
+# loop over all blade elements
+# TODO add loop
+
 # Local Thrust Contribution: loc_dT [?]
- 
+# TODO please validate
+dT = 4*np.pi * r * RHO * V_0**2 * a * (1-a) * dr 
 
 # Local Torque Contribution: loc_dM [?]
-
+# TODO please validate
+#dM = 4*np.pi * r**3 * RHO * V_0**2 * omega * a_prime (1-a_prime) * dr
 
 #%% END of script
 
