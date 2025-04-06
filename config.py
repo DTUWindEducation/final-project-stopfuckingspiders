@@ -33,3 +33,4 @@ AIRFOIL_INFO_IDENTIFIER = setup["AIRFOIL_INFO_IDENTIFIER"]
 #Define global constant parameters
 R = 120  # Rotor Radius [m]
 RHO = 1.225  # [kg/m^3] (air density)
+B=3 # [-] Number of blades
