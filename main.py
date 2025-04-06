@@ -8,7 +8,8 @@ import re
 from typing import Union
 from pathlib import Path
 
-#%% List of Global Variables defined in the config file:
+#%% ---------- Global Variables ----------
+# List of Global Variables defined in the config file:
 from config import *
 # DATA_PATH
 # REFERENCE_WIND_TURBINE_PATH
@@ -26,16 +27,17 @@ from WindTurbineModeling.read import *
 from WindTurbineModeling.load import *
 from WindTurbineModeling.plot import *
 
+#%% -- FUNCTIONS --
 
-#%% Functions
+# - Main -
 def main():
     pass
 
-#%% Test for main
+#%% -- IF MAIN --
 if __name__ == "__main__":
     pass
 
-#%% ---------- LOAD DATA ----------
+#%% -- LOAD DATA --
 # -- Blade Data Input --
 dfs_blade_input_data = load_blade_geometry([BLADE_DEFINITION_INPUT_FILE_PATH])
 # Since we only have one input file.
@@ -63,5 +65,4 @@ airfoil_info_paths = [f for f in airfoil_files if AIRFOIL_INFO_IDENTIFIER in str
 # dataframe: contains the coefficients
 unsteady_aerodynamics_coefs, dfs_airfoil_aero_coef = load_airfoil_coefficients(airfoil_info_paths)
 
-# plot airfoil shapes
-#plot_airfoil_shapes(shape_data)
+#%% -- DO DATA --
