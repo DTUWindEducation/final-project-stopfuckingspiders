@@ -4,7 +4,7 @@
 test.py
 .vscode/*
 TASK.md
-
+plot_turbine.py
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
