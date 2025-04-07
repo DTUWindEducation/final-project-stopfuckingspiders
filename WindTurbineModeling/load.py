@@ -9,7 +9,7 @@ from typing import Union
 from pathlib import Path
 
 
-def load_blade_geometry(filepaths: list[Union[str, Path]]):
+def load_blade_geometry(filepath: Union[str, Path]):
     """
     Load blade nodal geometry from an AeroDyn15 blade input file.
     Inputs from file:
@@ -24,24 +24,23 @@ def load_blade_geometry(filepaths: list[Union[str, Path]]):
     Each row in the file defines one node along the blade, from root to tip.
     """
 
-    results = []
-    for filepath in filepaths:
-        df = pd.read_csv(
-            filepath,
-            sep=r'\s+',
-            skiprows=6,  # skip header, units, and metadata
-            header=None,
-            names=[
-                'BlSpn', 'BlCrvAC', 'BlSwpAC', 'BlCrvAng', 'BlTwist',
-                'BlChord', 'BlAFID', 'BlCb', 'BlCenBn', 'BlCenBt'
-            ]
-        )
 
-        # Select and cast relevant columns
-        blade_geom = df[['BlSpn', 'BlTwist', 'BlChord', 'BlAFID']]
-        blade_geom.loc[:, 'BlAFID'] = blade_geom['BlAFID'].astype(int)
-        results.append(blade_geom)
-    return results
+    df = pd.read_csv(
+        filepath,
+        sep=r'\s+',
+        skiprows=6,  # skip header, units, and metadata
+        header=None,
+        names=[
+            'BlSpn', 'BlCrvAC', 'BlSwpAC', 'BlCrvAng', 'BlTwist',
+            'BlChord', 'BlAFID', 'BlCb', 'BlCenBn', 'BlCenBt'
+        ]
+    )
+
+    # Select and cast relevant columns
+    blade_geom = df[['BlSpn', 'BlTwist', 'BlChord', 'BlAFID']]
+    blade_geom.loc[:, 'BlAFID'] = blade_geom['BlAFID'].astype(int)
+
+    return blade_geom
 
 def load_operational_settings(filepath: Union[str, Path]):
     """
