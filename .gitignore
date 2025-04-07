@@ -1,10 +1,10 @@
 # files to ignore in this repo
 #inputs/
 #outputs/
-*test.py
-TASK.md
+test.py
 .vscode/*
-
+TASK.md
+plot_turbine.py
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
