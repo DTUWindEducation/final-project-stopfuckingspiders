@@ -31,6 +31,9 @@ AIRFOIL_SHAPE_IDENTIFIER = setup["AIRFOIL_SHAPE_IDENTIFIER"]
 AIRFOIL_INFO_IDENTIFIER = setup["AIRFOIL_INFO_IDENTIFIER"]
 
 #Define global constant parameters
+#TODO add vars in to 'config.yaml'
 R = 120  # Rotor Radius [m]
 RHO = 1.225  # [kg/m^3] (air density)
 B=3 # [-] Number of blades
+TOLERANCE = 1e-8
+DR = 0.1
