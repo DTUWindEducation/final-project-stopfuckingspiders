@@ -180,30 +180,28 @@ alpha.name = 'LocAngleAttack (alpha)[deg]'
 C_d, C_l = calc_local_lift_drag_force(alpha, df_airfoil_aero_coef) #TODO validate results
 
 #%% 5.Compute 
-# TODO what is C_n and C_t
 # TODO need to create a function for those values
-# TODO Check if phi must be in [deg] or [red]
+# TODO Check if phi must be in [deg] or [red] # From Hannah: DEGREES
 
-# ???: C_n [-]
+# Normal constant: C_n [-]
 C_n = C_l * np.cos(phi) + C_d * np.sin(phi)
 C_n.name = 'Name (C_n)[deg]'
 
-# ???: C_t [-]
+# Tangential constant: C_t [-]
 C_t = C_l * np.sin(phi) + C_d * np.cos(phi)
 C_t.name = 'Name (C_t)[deg]'
 
 #%% 6. Update induction factors
 
 #TODO create function
-#TODO Add unit oin comments
 #TODO validate results
 
-# Axial induction factors: a [?]
+# Axial induction factors: a
 denominator = (4 * np.sin(phi)**2) / ((sigma*C_n)+1)
 a = 1/(denominator)
 a.name = 'Axial induction factors (a)[-]'
 
-# Tangential induction factors: a_prime [?]
+# Tangential induction factors: a_prime
 denominator = (4 * np.sin(phi)* np.cos(phi)) / ((sigma*C_t)-1)
 a_prime = 1/(denominator)
 a_prime.name = 'Tangential induction factors (a_prime)[-]'
