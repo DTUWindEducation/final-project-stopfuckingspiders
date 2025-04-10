@@ -8,3 +8,11 @@ AIRFOIL_DATA_FOLDER: airfoils
 AIRFOIL_SHAPE_IDENTIFIER: _Coords
 AIRFOIL_INFO_IDENTIFIER: _Polar
 # Vars for the script
+
+#Define global constant parameters
+
+RADIUS: 120
+AIR_DENSITY: 1.225
+NUMBER_BLADES: 3
+TOLERANCE: 1e-8
+DR: 0.1 # Radial element width
