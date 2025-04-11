@@ -37,21 +37,25 @@ def calc_local_angle_of_attack(phi_rad, theta_p_deg, beta_deg):
     alpha_deg = np.rad2deg(phi_rad) - (theta_p_deg + beta_deg)
     return alpha_deg
 
-def calc_local_lift_drag_force(alpha_deg, df):
+def calc_local_lift_drag_force(alpha, df):
     """
-    Interpolate lift and drag coefficients from airfoil data, with clamping.
+    Interpolate lift and drag coefficients from airfoil data.
 
     Parameters:
-        alpha_deg (pd.Series): Local angle of attack in degrees
+        alpha (pd.Series): Local angle of attack in degrees
         df (pd.DataFrame): Airfoil data with 'Alpha (deg)', 'Cl', 'Cd'
 
     Returns:
         loc_C_d (pd.Series): Drag coefficient
         loc_C_l (pd.Series): Lift coefficient
     """
-    alpha_clamped = np.clip(alpha_deg, df['Alpha (deg)'].min(), df['Alpha (deg)'].max())
+    # Clamp alpha to within available airfoil data
+    alpha_clamped = np.clip(alpha, df['Alpha (deg)'].min(), df['Alpha (deg)'].max())
+
+    # Interpolate Cl and Cd
     loc_C_d = pd.Series(np.interp(alpha_clamped, df['Alpha (deg)'], df['Cd']), name="C_d [-]")
     loc_C_l = pd.Series(np.interp(alpha_clamped, df['Alpha (deg)'], df['Cl']), name="C_l [-]")
+
     return loc_C_d, loc_C_l
 
 def calc_local_solidity(bc, loc_BlChord):
@@ -81,13 +85,12 @@ def calc_normal_tangential_constants(phi_rad, C_d, C_l):
         C_t (pd.Series): Tangential force coefficient
     """
     C_n = C_l * np.cos(phi_rad) + C_d * np.sin(phi_rad)
-    C_t = C_l * np.sin(phi_rad) + C_d * np.cos(phi_rad)
+    C_t = C_l * np.sin(phi_rad) - C_d * np.cos(phi_rad)
     return C_n, C_t
 
 def update_induction_factors(phi_rad, sigma, C_n, C_t):
     """
     Compute updated axial and tangential induction factors.
-    Clamps denominator to avoid division by zero or instability.
 
     Parameters:
         phi_rad (pd.Series): Flow angle in radians
@@ -99,15 +102,16 @@ def update_induction_factors(phi_rad, sigma, C_n, C_t):
         a (pd.Series): Axial induction factor
         a_prime (pd.Series): Tangential induction factor
     """
-    eps = 1e-6
+    eps = 1e-6  # small number to avoid division by zero
 
-    # Axial
+    # Axial induction
     denom_a = (4 * np.sin(phi_rad)**2) / (sigma * C_n + 1)
-    denom_a = np.where(denom_a == 0, eps, denom_a)
+    denom_a = np.clip(denom_a, eps, None)
     a = 1 / denom_a
 
-    # Tangential
-    denom_aprime = (4 * np.sin(phi_rad) * np.cos(phi_rad)) / np.clip((sigma * C_t - 1), eps, None)
+    # Tangential induction
+    denom_aprime = (4 * np.sin(phi_rad) * np.cos(phi_rad)) / (sigma * C_t - 1)
+    denom_aprime = np.clip(denom_aprime, eps, None)
     a_prime = 1 / denom_aprime
 
     return a, a_prime
@@ -164,7 +168,7 @@ def compute_totals_and_coefficients(dT, dM, omega, dr, RHO, R, V_0):
     """
     T = np.trapz(dT, dx=dr)
     M = np.trapz(dM, dx=dr)
-    P = np.trapz(omega * dM / dr, dx=dr)
+    P = np.trapz((dM / dr).values * omega.mean(), dx=dr)
     C_T, C_P = compute_rotor_coefficients(T, P, RHO, R, V_0)
     return T, M, P, C_T, C_P
 
