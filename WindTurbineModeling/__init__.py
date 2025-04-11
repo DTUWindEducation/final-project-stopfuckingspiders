@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import xarray as xr
 
-from scipy.integrate import simps
+#from scipy.integrate import simps
 
 #For Functions
 import re
