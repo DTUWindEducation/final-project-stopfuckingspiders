@@ -28,7 +28,7 @@ from config import *
 # -AIRFOIL_INFO_IDENTIFIER
 # -R
 # -RHO
-# -B
+# -NUMBER_BLADES
 # -TOLERANCE
 # -DR
 
@@ -40,6 +40,7 @@ from dataclasses import dataclass
 class BoundaryConditions:
     dr: float
     r: float
+    Num_Blades: int
     r_s: np.ndarray
     V_0: pd.Series
     theta_p: pd.Series
@@ -95,7 +96,7 @@ df_airfoil_aero_coef = dfs_airfoil_aero_coef[0]
 
 #%% Define boundary conditions:
 # Delta r: dr [m]
-dr = DR
+dr = DR # DR is defined in the config
 # Radius: r [m], list r_s [m]
 # list from 0 to R with dr increments
 r_s = np.arange(0, R+dr, dr) #TODO should r start at 0? Will we get plausible results if r=0?
@@ -134,10 +135,10 @@ a_prime = 0
 #TODO units for a?
 
 #%% Create dict with boundary conditions
-
 BC = BoundaryConditions(
     dr=dr,
     r=r,
+    Num_Blades=NUMBER_BLADES,
     r_s=r_s,
     V_0=V_0,
     theta_p=theta_p,
@@ -152,20 +153,18 @@ BC = BoundaryConditions(
 #%% Interpolate
 # - Blade Twist
 loc_BlTwist = np.interp(r, BlSpn, BlTwist) #[deg] #TODO use r_s, validate
+
 # - Chord Length: c [m]
-c = loc_BlTwist = np.interp(r, BlSpn, BlChord) #[deg] #TODO use r_s, validate
+loc_BlChord = np.interp(r, BlSpn, BlChord) #[deg] #TODO use r_s, validate
 
 # Local Solidity: sigma [?]
-sigma = calc_local_solidity(r, c, B) #TODO use r_s, validate
+sigma = calc_local_solidity(BC, loc_BlChord) #TODO use r_s, validate
 
 #%% 2. Compute flow angle 
 # Flow Angle: phi [deg]
-# Flow angle phi_xr is a 2D-Array with results of phi(r) for each r
 
-phi_xr = get_flow_angle(BC) #TODO @dorian: Simplify it back, don't use xarray, stay with pandas
-r = 1
-phi = phi_xr[:,0].values
-
+phi = calc_flow_angle(BC)
+phi.name = 'FlowAnlgle (phi)[deg]'
 #%% 3. Compute local angle of attack
 # Local Angle of Attack: alpha [deg]
 
