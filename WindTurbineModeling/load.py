@@ -66,21 +66,38 @@ def load_geometry(filepaths: list[Union[str, Path]]):
     return dfs
 
 def load_airfoil_coefficients(filepaths: list[Union[str, Path]]):
-    
-    # init lists for return
+    """
+    Load aerodynamic polar data from a list of airfoil files.
+
+    Each file is expected to contain a table of aerodynamic coefficients
+    (angle of attack, lift, drag, moment), preceded by optional headers.
+    This function extracts the aerodynamic table from each file and applies
+    consistency checks:
+      - Skips files with nearly constant Cl values (flat dummy polars)
+      - Flips Cl sign if it decreases with increasing alpha
+
+    Parameters:
+        filepaths (list of Path or str): List of file paths to airfoil polar data.
+
+    Returns:
+        headers (list of dict): Metadata parsed from each file, if available.
+        dfs (list of pd.DataFrame): DataFrames containing columns:
+            'Alpha (deg)', 'Cl', 'Cd', 'Cm'
+    """
     headers = []
     dfs = []
-    
+
     for filepath in filepaths:
-    
         header_data = {}
         table_data = []
+
         with open(filepath, "r") as file:
             lines = file.readlines()
 
         i = 0
         while i < len(lines):
             line = lines[i].strip()
+
             if not line or line.startswith("!"):
                 i += 1
                 continue
@@ -88,6 +105,7 @@ def load_airfoil_coefficients(filepaths: list[Union[str, Path]]):
             parts = line.split("!")
             data_part = parts[0].strip()
             tokens = data_part.split()
+
             if len(tokens) >= 2:
                 value = tokens[0]
                 key = tokens[1]
@@ -96,7 +114,6 @@ def load_airfoil_coefficients(filepaths: list[Union[str, Path]]):
             if "InclUAdata" in data_part:
                 if value.lower() == "true":
                     i += 1
-                    # Read UA data lines until table header is found
                     while not lines[i].strip().startswith("! Table of aerodynamics coefficients"):
                         ua_line = lines[i].strip()
                         if ua_line and not ua_line.startswith("!"):
@@ -110,6 +127,7 @@ def load_airfoil_coefficients(filepaths: list[Union[str, Path]]):
                 else:
                     while not lines[i].strip().startswith("! Table of aerodynamics coefficients"):
                         i += 1
+
             i += 1
             if lines[i].strip().startswith("!    Alpha"):
                 i += 2
@@ -127,9 +145,23 @@ def load_airfoil_coefficients(filepaths: list[Union[str, Path]]):
 
         df = pd.DataFrame(table_data, columns=["Alpha (deg)", "Cl", "Cd", "Cm"])
 
+        # Sanity checks on Cl
+        cl_std = df["Cl"].std()
+        cl_at_pos_alpha = df[df["Alpha (deg)"] > 10]["Cl"].mean()
+        cl_at_neg_alpha = df[df["Alpha (deg)"] < -10]["Cl"].mean()
+
+        if cl_std < 0.01:
+            print(f"❌ Skipping '{filepath.name}': Cl appears flat (std={cl_std:.5f})")
+            continue
+
+        if cl_at_pos_alpha < cl_at_neg_alpha:
+            print(f"⚠️ Flipping Cl in '{filepath.name}': increasing alpha gives decreasing Cl")
+            df["Cl"] = -df["Cl"]
+
         headers.append(header_data)
         dfs.append(df)
 
     return headers, dfs
+
 
 
