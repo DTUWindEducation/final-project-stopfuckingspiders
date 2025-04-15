@@ -4,27 +4,25 @@ import matplotlib.pyplot as plt
 import os
 import re
 from io import StringIO
-import pandas as pd
 from typing import Union
 from pathlib import Path
 
-
-def load_blade_geometry(filepath: Union[str, Path]):
+def load_blade_geometry(filepath: Union[str, Path]) -> pd.DataFrame:
     """
     Load blade nodal geometry from an AeroDyn15 blade input file.
-    Inputs from file:
-    - NumBlNds: Number of blade nodes (must match number of rows in table).
-    - BlSpn: Spanwise location from root [m], must start at 0 and increase.
-    - BlCrvAC: Out-of-plane offset of aerodynamic center [m], positive downwind.
-    - BlSwpAC: In-plane offset of aerodynamic center [m], positive opposite rotation.
-    - BlCrvAng: Angle of normal vector from airfoil plane due to curvature [deg].
-    - BlTwist: Local aerodynamic twist angle [deg], positive to feather.
-    - BlChord: Local chord length [m].
-    - BlAFID: Airfoil ID corresponding to entry in airfoil data table.
-    Each row in the file defines one node along the blade, from root to tip.
+
+    Parameters
+    ----------
+    filepath : str or Path
+        Path to the AeroDyn15 blade geometry file.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame containing the cleaned and parsed geometry data,
+        including spanwise location (BlSpn), twist (BlTwist),
+        chord length (BlChord), and airfoil ID (BlAFID).
     """
-
-
     df = pd.read_csv(
         filepath,
         sep=r'\s+',
@@ -42,22 +40,42 @@ def load_blade_geometry(filepath: Union[str, Path]):
 
     return blade_geom
 
-def load_operational_settings(filepath: Union[str, Path]):
+def load_operational_settings(filepath: Union[str, Path]) -> pd.DataFrame:
     """
-    Loads the operational strategy data, skipping the header line.
+    Load the operational conditions for the wind turbine (e.g., wind speed, pitch, RPM).
+
+    Parameters
+    ----------
+    filepath : str or Path
+        Path to the operational conditions file.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with columns: WindSpeed, PitchAngle, RotSpeed, AeroPower, AeroThrust.
     """
     df = pd.read_csv(
         filepath,
         sep=r'\s+',
-        skiprows=1,  # Skip the malformed "header" row
+        skiprows=1,
         header=None,
         names=['WindSpeed', 'PitchAngle', 'RotSpeed', 'AeroPower', 'AeroThrust']
     )
     return df
 
-def load_geometry(filepaths: list[Union[str, Path]]):
+def load_geometry(filepaths: list[Union[str, Path]]) -> list[pd.DataFrame]:
     """
-    Load normalized airfoil shape coordinates from the airfoil shape file.
+    Load normalized airfoil shape coordinates (x/c, y/c) from coordinate files.
+
+    Parameters
+    ----------
+    filepaths : list of str or Path
+        List of paths to airfoil shape files.
+
+    Returns
+    -------
+    list of pd.DataFrame
+        Each DataFrame contains columns ['x/c', 'y/c'].
     """
     dfs = []
     for filepath in filepaths: 
@@ -65,24 +83,25 @@ def load_geometry(filepaths: list[Union[str, Path]]):
         dfs.append(pd.DataFrame(data, columns=["x/c", "y/c"]))
     return dfs
 
-def load_airfoil_coefficients(filepaths: list[Union[str, Path]]):
+def load_airfoil_coefficients(filepaths: list[Union[str, Path]]) -> tuple[list[dict], list[pd.DataFrame]]:
     """
-    Load aerodynamic polar data from a list of airfoil files.
+    Load aerodynamic polar data (Cl, Cd, Cm) for each airfoil from polar files.
 
-    Each file is expected to contain a table of aerodynamic coefficients
-    (angle of attack, lift, drag, moment), preceded by optional headers.
-    This function extracts the aerodynamic table from each file and applies
-    consistency checks:
-      - Skips files with nearly constant Cl values (flat dummy polars)
-      - Flips Cl sign if it decreases with increasing alpha
+    Parses metadata and polar tables from each file. Also handles unsteady 
+    aerodynamic data if included.
 
-    Parameters:
-        filepaths (list of Path or str): List of file paths to airfoil polar data.
+    Parameters
+    ----------
+    filepaths : list of str or Path
+        List of paths to airfoil polar files.
 
-    Returns:
-        headers (list of dict): Metadata parsed from each file, if available.
-        dfs (list of pd.DataFrame): DataFrames containing columns:
-            'Alpha (deg)', 'Cl', 'Cd', 'Cm'
+    Returns
+    -------
+    tuple
+        headers : list of dict
+            Header metadata extracted from each file (if available).
+        dfs : list of pd.DataFrame
+            Polar data tables with columns: 'Alpha (deg)', 'Cl', 'Cd', 'Cm'.
     """
     headers = []
     dfs = []
@@ -145,23 +164,9 @@ def load_airfoil_coefficients(filepaths: list[Union[str, Path]]):
 
         df = pd.DataFrame(table_data, columns=["Alpha (deg)", "Cl", "Cd", "Cm"])
 
-        # Sanity checks on Cl
-        cl_std = df["Cl"].std()
-        cl_at_pos_alpha = df[df["Alpha (deg)"] > 10]["Cl"].mean()
-        cl_at_neg_alpha = df[df["Alpha (deg)"] < -10]["Cl"].mean()
-
-        if cl_std < 0.01:
-            print(f"❌ Skipping '{filepath.name}': Cl appears flat (std={cl_std:.5f})")
-            continue
-
-        if cl_at_pos_alpha < cl_at_neg_alpha:
-            print(f"⚠️ Flipping Cl in '{filepath.name}': increasing alpha gives decreasing Cl")
-            df["Cl"] = -df["Cl"]
+        # Optional sanity checks on Cl could go here
 
         headers.append(header_data)
         dfs.append(df)
 
     return headers, dfs
-
-
-

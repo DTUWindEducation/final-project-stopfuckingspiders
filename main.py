@@ -1,38 +1,18 @@
-# main.py
 from time import time
+import numpy as np
+from dataclasses import dataclass
+import matplotlib.pyplot as plt
+
+from config import *
+from WindTurbineModeling.read import *
+from WindTurbineModeling.load import *
+from WindTurbineModeling.equations import *
+from WindTurbineModeling.plot import *
+
+# Start execution timer
 start = time()
 
-import os
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import xarray as xr
-
-# For Functions
-import re
-from typing import Union
-from pathlib import Path
-
-#%% ---------- Global Variables ----------
-from config import *
-# List of Global Variables defined in the config file:
-# -DATA_PATH
-# -REFERENCE_WIND_TURBINE_PATH
-# -BLADE_DEFINITION_INPUT_FILE_PATH # input file for blade geometry
-# -OPERATIONAL_CONDITIONS_FILE_PATH
-# -AIRFOIL_DATA
-# -RESULTS_PATH
-# -AIRFOIL_SHAPE_IDENTIFIER
-# -AIRFOIL_INFO_IDENTIFIER
-# -R
-# -RHO
-# -NUMBER_BLADES
-# -TOLERANCE
-# -DR
-
-#%% Define classes
-# Class for Boundary Conditions to pass in functions etc.
-from dataclasses import dataclass
+# ------------------------ Data Class for Boundary Conditions ------------------------
 @dataclass
 class BoundaryConditions:
     dr: float
@@ -45,187 +25,122 @@ class BoundaryConditions:
     BlSpn: pd.Series
     BlTwist: pd.Series
     BlChord: pd.Series
+    BlAFID: pd.Series
     a0: pd.Series
     a0_prime: pd.Series
 
-#%% Load Wind Turbine Model Module
-from WindTurbineModeling import *
-from WindTurbineModeling.read import *
-from WindTurbineModeling.load import *
-from WindTurbineModeling.plot import *
-from WindTurbineModeling.equations import *
-#*******************************************************************************
-
-#%% -- LOAD DATA --
-# -- Blade Data Input --
+# ------------------------ Load Input Data ------------------------
+# Blade geometry
 df_blade_input_data = load_blade_geometry(BLADE_DEFINITION_INPUT_FILE_PATH)
+df_blade_input_data = df_blade_input_data[df_blade_input_data["BlAFID"] > 1].reset_index(drop=True)
 
-# -- Operational Settings --
+# Operational conditions
 df_settings = load_operational_settings(OPERATIONAL_CONDITIONS_FILE_PATH)
+df_settings = df_settings[(df_settings["WindSpeed"] >= 3.0) & (df_settings["WindSpeed"] <= 25.0)]
 
-# -- Wind Speed Filtering Based on IEA-15MW Reference Constraints --
-CUT_IN_WIND_SPEED = 3.0        # [m/s]
-CUT_OUT_WIND_SPEED = 25.0      # [m/s]
-RATED_WIND_SPEED = 10.6        # [m/s]
-RATED_POWER = 15_000_000       # [W]
-
-# Filter operational settings to valid range
-df_settings = df_settings[
-    (df_settings["WindSpeed"] >= CUT_IN_WIND_SPEED) &
-    (df_settings["WindSpeed"] <= CUT_OUT_WIND_SPEED)
-]
-
-if df_settings.empty:
-    print("No valid wind speeds found within cut-in/cut-out limits. Aborting.")
-    exit()
-
-V0_range = df_settings["WindSpeed"].min(), df_settings["WindSpeed"].max()
-print(f"Loaded {len(df_settings)} valid operating points (Wind speed: {V0_range[0]:.1f}–{V0_range[1]:.1f} m/s)")
-
-# -- Aerodynamic Properties --
-# Load all files in a list with the aerodynamic properties (geometry and coefficients)
+# Airfoil definitions
 airfoil_files = get_files_by_extension(AIRFOIL_DATA, [".dat", ".txt"])
+airfoil_shapes = [f for f in airfoil_files if AIRFOIL_SHAPE_IDENTIFIER in str(f)]
+airfoil_coeffs = [f for f in airfoil_files if AIRFOIL_INFO_IDENTIFIER in str(f)]
+df_shapes = load_geometry(airfoil_shapes)
+_, dfs_airfoil_raw = load_airfoil_coefficients(airfoil_coeffs)
 
-# -- Airfoil Shape (geometry) --
-# Create a list with all files describing the airfoil geometry
-airfoil_shape_paths = [f for f in airfoil_files if AIRFOIL_SHAPE_IDENTIFIER in str(f)]
-# Get a list of dataframes with the airfoil geometries
-dfs_geometry = load_geometry(airfoil_shape_paths)
+# Match airfoils to IDs
+valid_blafids, dfs_airfoil = [], []
+for i, df in enumerate(dfs_airfoil_raw):
+    valid_blafids.append(i + 1)
+    dfs_airfoil.append(df)
 
-# -- Aerodynamic Coefficients --
-# Create a list with all files describing the airfoil coefficients
-airfoil_info_paths = [f for f in airfoil_files if AIRFOIL_INFO_IDENTIFIER in str(f)]
-# Get a list of dict and a list of dataframes
-# dict: contain header information for the coefficient (only if unsteady aerodynamics data is included)
-# dataframe: contains the coefficients
-_, dfs_airfoil_aero_coef = load_airfoil_coefficients(airfoil_info_paths)
-
-#%% Start iteration though each airfoil -info and -geometry file
-for f_shape, f_info in zip(airfoil_shape_paths, airfoil_info_paths):
-    print(f'Shape: {f_shape.stem[:]} => Info: {f_info.stem[:]}')
-    #TODO equation should be run here for each airfoil
-
-# For development: use only the first geometry and coefficient set
-dfs_geometry = dfs_geometry[0]
-df_airfoil_aero_coef = dfs_airfoil_aero_coef[0]
-
-#%% Define boundary conditions:
-# Delta r: dr [m]
-dr = DR  # DR is defined in the config
-
-# Radius span: list from 0 to R with dr increments
-r_s = np.arange(3, R + dr, dr)  # TODO should r start at 0?
-
-# Inflow wind speed: V_0 [m/s]
-V_0 = df_settings['WindSpeed']
-V_0.name = 'WindSpeed (V_0)[m/s]'
-
-# Blade pitch angle: theta_p [deg]
-theta_p = df_settings['PitchAngle']
-theta_p.name = 'BladePitchAngle (theta_p)[deg]'
-
-# Rotational speed: omega [rpm] -> [1/s]
-omega = df_settings['RotSpeed'] / 60
-omega.name = 'RotSpeed (omega)[1/s]'
-
-# Local Blade Span at node [m]
+# Blade span inputs
+r_s = df_blade_input_data['BlSpn'].values
 BlSpn = df_blade_input_data['BlSpn']
-
-# Local Blade Twist at node [deg]
 BlTwist = df_blade_input_data['BlTwist']
-
-# Local Blade Chord at node [m]
 BlChord = df_blade_input_data['BlChord']
+BlAFID = df_blade_input_data['BlAFID']
 
-#%% Create dict with boundary conditions
-BC = BoundaryConditions(
-    dr=dr,
-    r=0,  # Overwritten in loop
-    Num_Blades=NUMBER_BLADES,
-    r_s=r_s,
-    V_0=V_0,
-    theta_p=theta_p,
-    omega=omega,
-    BlSpn=BlSpn,
-    BlTwist=BlTwist,
-    BlChord=BlChord,
-    a0=0.0,
-    a0_prime=0.0
-)
+# ------------------------ Run Blade Element Momentum Method ------------------------
+results = []
 
-#%% Loop over full span with convergence check
-dT_list = []
-dM_list = []
-a_list = []
-a_prime_list = []
+for _, row in df_settings.iterrows():
+    V0 = row['WindSpeed']
+    pitch = row['PitchAngle']
+    omega = calc_omega(row['RotSpeed'])  # now using the helper function
 
-V_0_scalar = V_0.mean()
-omega_scalar = omega.mean()
-TOLERANCE = 1e-8
-MAX_ITER = 100
+    dT_list, dM_list, r_used = [], [], []
 
-for r in r_s:
-    loc_BlTwist, loc_BlChord = interpolate_blade_geometry(r, BlSpn, BlTwist, BlChord)
-    BC.r = r
-    sigma = calc_local_solidity(BC, loc_BlChord)
+    for r, af_id in zip(r_s, BlAFID):
+        # Get local blade geometry
+        beta, chord = interpolate_blade_geometry(r, BlSpn, BlTwist, BlChord)
+        df_polar = dfs_airfoil[valid_blafids.index(af_id)]
 
-    # Initial guess for induction factors
-    a = 0
-    a_prime = 0
+        # Initialize induction factors
+        a, a_prime = 0.0, 0.0
 
-    # Iterate to converge
-    for _ in range(MAX_ITER):
-        BC.a0 = a
-        BC.a0_prime = a_prime
+        for _ in range(MAX_ITER):
+            # Flow angle and AoA
+            phi = calc_flow_angle(V0, omega, r, a, a_prime)
+            alpha = calc_local_angle_of_attack(phi, pitch, beta)
 
-        phi = calc_flow_angle(BC)
-        alpha = calc_local_angle_of_attack(phi, theta_p, loc_BlTwist)
-        C_d, C_l = calc_local_lift_drag_force(alpha, df_airfoil_aero_coef)
-        C_n, C_t = calc_normal_tangential_constants(phi, C_d, C_l)
-        a_new, a_prime_new = update_induction_factors(phi, sigma, C_n, C_t)
+            # Lift and drag
+            Cl, Cd = calc_local_lift_drag_force(alpha, df_polar)
+            Cn, Ct = calc_normal_tangential_constants(phi, Cl, Cd)
 
-        a_new = float(np.mean(a_new))
-        a_prime_new = float(np.mean(a_prime_new))
+            # Local solidity and Prandtl tip loss
+            sigma = calc_local_solidity(NUMBER_BLADES, chord, r)
+            F = calc_prandtl_tip_loss(NUMBER_BLADES, R, r, phi)
 
-        if abs(a_new - a) < TOLERANCE and abs(a_prime_new - a_prime) < TOLERANCE:
-            break
+            # Update induction factors
+            a_new, a_prime_new = update_induction_factors(phi, sigma, Cn, Ct, F, a)
 
-        a, a_prime = a_new, a_prime_new
+            # Check convergence
+            if abs(a_new - a) < TOLERANCE and abs(a_prime_new - a_prime) < TOLERANCE:
+                break
 
-    # Store results
-    a_list.append(a)
-    a_prime_list.append(a_prime)
+            a, a_prime = a_new, a_prime_new
 
-    r_series = pd.Series([r], index=[r])
-    dT = compute_local_thrust(r_series, V_0_scalar, a, RHO, dr)
-    dM = compute_local_torque(r_series, V_0_scalar, a, a_prime, omega_scalar, RHO, dr)
+        # Compute relative wind velocity and loads
+        v_rel, p_n, p_t = calc_relative_velocity_and_forces(V0, omega, r, a, a_prime, RHO, chord, Cn, Ct)
 
-    print(f"r = {r:.2f} m | a = {a:.4f}, a' = {a_prime:.4f}")
-    print(f"  alpha = {alpha.mean():.2f} deg | Cl = {C_l.mean():.2f}, Cd = {C_d.mean():.2f}")
-    print(f"  Cn = {C_n.mean():.2f}, Ct = {C_t.mean():.2f}")
-    print(f"  dT = {dT.values[0]:.2e} N | dM = {dM.values[0]:.2e} Nm\n")
+        # Skip if invalid (stall or numerics)
+        if np.isnan(Cl) or np.isnan(Cd) or np.isnan(p_t) or Cl == 0 or p_t < 0:
+            continue
 
-    dT_list.append(dT)
-    dM_list.append(dM)
+        # Accumulate local thrust and torque
+        dT_list.append(NUMBER_BLADES * p_n)
+        dM_list.append(NUMBER_BLADES * r * p_t)
+        r_used.append(r)
 
-#%% Assemble into full Series
-dT = pd.concat(dT_list, axis=0).sort_index()
-dM = pd.concat(dM_list, axis=0).sort_index()
-a_series = pd.Series(a_list, index=r_s, name="a")
-a_prime_series = pd.Series(a_prime_list, index=r_s, name="a_prime")
+    # Total thrust, torque, power, coefficients
+    T, M, P_total, CP, CT = compute_totals_and_coefficients(
+        dT_list, dM_list, omega, r_used, RHO, R, V0, RATED_POWER
+    )
 
-#%% Final integration and performance
-#TODO: optionally plot distributions of a, alpha, dT, etc.
-T = np.trapz(dT, dx=dr)
-M = np.trapz(dM, dx=dr)
-P = np.trapz((dM / dr).values * omega_scalar, dx=dr)
-C_T, C_P = compute_rotor_coefficients(T, P, RHO, R, V_0)
+    results.append({
+        "V_0": V0,
+        "T": T,
+        "M": M,
+        "P": P_total,
+        "C_P": CP,
+        "C_T": CT,
+    })
 
-if P > RATED_POWER:
-    print(f"Warning: Simulated power output {P / 1e6:.2f} MW exceeds rated capacity (15.0 MW)")
+# ------------------------ Output Summary ------------------------
+df = pd.DataFrame(results).sort_values("V_0")
+print("Final Summary Table:")
+print(df[["V_0", "P", "T", "M", "C_P", "C_T"]].round(2).to_string(index=False))
 
-print_summary(T, M, P, C_T, C_P)
+# ------------------------ Plotting ------------------------
+V_arr = df["V_0"].values
+P_arr = df["P"].values / 1e6  # Convert to MW
+Cp_arr = df["C_P"].values
+T_arr = df["T"].values
 
-#%% END
-end = time()
-print(f"Execution time: {end - start:.4f} seconds")
+plot_power_curve(V_arr, P_arr, RATED_POWER)
+plot_cp_curve(V_arr, Cp_arr)
+plot_thrust_curve(V_arr, T_arr)
+plot_airfoil_shapes(df_shapes)
+plot_wind_turbine()
+
+plt.show()
+print(f"Execution time: {time() - start:.2f} s")
+
