@@ -1,257 +1,365 @@
 import numpy as np
-import pandas as pd
 
-def calc_flow_angle(bc):
+def calc_omega(rot_speed_rpm):
     """
-    Calculate the local flow angle φ [rad].
+    Convert rotational speed from RPM to angular velocity in radians per second.
 
-    Equation:
-        φ = arctan((1 - a) * V₀ / ((1 + a') * ω * r))
+    Parameters
+    ----------
+    rot_speed_rpm : float
+        Rotational speed [RPM].
 
-    Parameters:
-        bc (BoundaryConditions): Boundary conditions including wind speed, rotation, radius, and induction factors.
-
-    Returns:
-        float or pd.Series: Flow angle φ in radians.
+    Returns
+    -------
+    float
+        Angular velocity [rad/s].
     """
-    a = bc.a0
-    a_prime = bc.a0_prime
-    V_0 = bc.V_0
-    omega = bc.omega
-    r = bc.r
-    return np.arctan((1 - a) * V_0 / ((1 + a_prime) * omega * r))
+    return rot_speed_rpm * (2 * np.pi / 60)
+
+def calc_flow_angle(V_0, omega, r, a, a_prime):
+    """
+    Compute the local flow angle φ (phi) in radians.
+
+    Parameters
+    ----------
+    V_0 : float
+        Freestream wind speed [m/s].
+    omega : float
+        Rotor angular velocity [rad/s].
+    r : float
+        Radial location [m].
+    a : float
+        Axial induction factor.
+    a_prime : float
+        Tangential induction factor.
+
+    Returns
+    -------
+    float
+        Flow angle φ [rad].
+    """
+    return np.arctan(((1 - a) * V_0) / ((1 + a_prime) * omega * r))
 
 
 def calc_local_angle_of_attack(phi_rad, theta_p_deg, beta_deg):
     """
-    Calculate the local angle of attack α [deg].
+    Calculate the angle of attack in degrees.
 
-    Equation:
-        α = φ - (θ_p + β)
+    Parameters
+    ----------
+    phi_rad : float
+        Flow angle [rad].
+    theta_p_deg : float
+        Pitch angle [deg].
+    beta_deg : float
+        Local twist angle [deg].
 
-    Parameters:
-        phi_rad (float or pd.Series): Flow angle [rad].
-        theta_p_deg (pd.Series): Blade pitch angle [deg].
-        beta_deg (float): Local twist angle [deg].
-
-    Returns:
-        pd.Series: Local angle of attack α [deg].
+    Returns
+    -------
+    float
+        Angle of attack [deg].
     """
-    return np.rad2deg(phi_rad) - (theta_p_deg + beta_deg)
+    return np.degrees(phi_rad) - (theta_p_deg + beta_deg)
 
 
 def interpolate_blade_geometry(r, BlSpn, BlTwist, BlChord):
     """
-    Interpolate local twist and chord length from spanwise distributions.
+    Linearly interpolate the blade twist and chord at a given spanwise location.
 
-    Parameters:
-        r (float): Radial location [m].
-        BlSpn (pd.Series): Blade span positions [m].
-        BlTwist (pd.Series): Blade twist angles [deg].
-        BlChord (pd.Series): Blade chord lengths [m].
+    Parameters
+    ----------
+    r : float
+        Radial location [m].
+    BlSpn : array-like
+        Spanwise positions of the blade [m].
+    BlTwist : array-like
+        Twist angles along the span [deg].
+    BlChord : array-like
+        Chord lengths along the span [m].
 
-    Returns:
-        tuple[float, float]: (twist angle [deg], chord length [m])
+    Returns
+    -------
+    tuple (float, float)
+        Interpolated (beta, chord) at r.
     """
-    twist = np.interp(r, BlSpn, BlTwist)
+    beta = np.interp(r, BlSpn, BlTwist)
     chord = np.interp(r, BlSpn, BlChord)
-    return twist, chord
+    return beta, chord
 
 
-def calc_local_lift_drag_force(alpha, df):
+def calc_local_lift_drag_force(alpha, df_polar):
     """
     Interpolate lift and drag coefficients from airfoil polar data.
 
-    Parameters:
-        alpha (pd.Series): Angle of attack [deg].
-        df (pd.DataFrame): Airfoil data with 'Alpha (deg)', 'Cl', 'Cd'.
+    Parameters
+    ----------
+    alpha : float
+        Angle of attack [deg].
+    df_polar : pd.DataFrame
+        Airfoil polar data containing "Alpha (deg)", "Cl", and "Cd".
 
-    Returns:
-        tuple[pd.Series, pd.Series]: (drag coefficient Cd [-], lift coefficient Cl [-])
+    Returns
+    -------
+    tuple (float, float)
+        Interpolated lift (Cl) and drag (Cd) coefficients.
     """
-    alpha_clamped = np.clip(alpha, df['Alpha (deg)'].min(), df['Alpha (deg)'].max())
-    Cd = pd.Series(np.interp(alpha_clamped, df['Alpha (deg)'], df['Cd']), name="C_d [-]")
-    Cl = pd.Series(np.interp(alpha_clamped, df['Alpha (deg)'], df['Cl']), name="C_l [-]")
-    return Cd, Cl
+    Cl = np.interp(alpha, df_polar["Alpha (deg)"], df_polar["Cl"])
+    Cd = np.interp(alpha, df_polar["Alpha (deg)"], df_polar["Cd"])
+    return Cl, Cd
 
 
-def calc_normal_tangential_constants(phi_rad, C_d, C_l):
+def calc_normal_tangential_constants(phi_rad, C_l, C_d):
     """
-    Calculate normal and tangential force coefficients.
+    Compute normal (Cn) and tangential (Ct) force coefficients.
 
-    Parameters:
-        phi_rad (float or pd.Series): Flow angle [rad].
-        C_d (pd.Series): Drag coefficient.
-        C_l (pd.Series): Lift coefficient.
+    Parameters
+    ----------
+    phi_rad : float
+        Flow angle [rad].
+    C_l : float
+        Lift coefficient.
+    C_d : float
+        Drag coefficient.
 
-    Returns:
-        tuple[pd.Series, pd.Series]: (C_n, C_t)
+    Returns
+    -------
+    tuple (float, float)
+        Normal and tangential force coefficients (Cn, Ct).
     """
-    C_n = C_l * np.cos(phi_rad) + C_d * np.sin(phi_rad)
-    C_t = C_l * np.sin(phi_rad) - C_d * np.cos(phi_rad)
-    return C_n, C_t
+    Cn = C_l * np.cos(phi_rad) + C_d * np.sin(phi_rad)
+    Ct = C_l * np.sin(phi_rad) - C_d * np.cos(phi_rad)
+    return Cn, Ct
 
 
-def calc_local_solidity(bc, loc_BlChord):
+def calc_local_solidity(NUMBER_BLADES, chord, r):
     """
-    Compute local blade solidity σ.
+    Compute the local solidity of the blade element.
 
-    Parameters:
-        bc (BoundaryConditions): Boundary condition context.
-        loc_BlChord (float): Local chord length [m].
+    Parameters
+    ----------
+    NUMBER_BLADES : int
+        Number of rotor blades.
+    chord : float
+        Local chord length [m].
+    r : float
+        Radial location [m].
 
-    Returns:
-        float: Local solidity σ [-].
+    Returns
+    -------
+    float
+        Local solidity σ.
     """
-    return (loc_BlChord * bc.Num_Blades) / (2 * np.pi * bc.r)
+    return NUMBER_BLADES * chord / (2 * np.pi * r)
 
 
 def calc_prandtl_tip_loss(B, R, r, phi):
     """
-    Calculate Prandtl's tip loss factor F.
+    Compute Prandtl's tip loss correction factor.
 
-    Parameters:
-        B (int): Number of blades.
-        R (float): Rotor radius [m].
-        r (float): Local radius [m].
-        phi (float): Flow angle [rad].
+    Parameters
+    ----------
+    B : int
+        Number of blades.
+    R : float
+        Rotor radius [m].
+    r : float
+        Local radial position [m].
+    phi : float
+        Flow angle [rad].
 
-    Returns:
-        float: Tip loss correction factor F [-], clipped between [1e-3, 1.0].
+    Returns
+    -------
+    float
+        Tip loss factor F ∈ (0, 1].
     """
-    f = (B / 2) * (R - r) / (r * np.sin(phi))
-    f = np.maximum(f, 1e-6)
-    F = (2 / np.pi) * np.arccos(np.exp(-f))
+    f_tip = (B / 2) * (R - r) / (r * np.sin(phi) + 1e-6)
+    F = (2 / np.pi) * np.arccos(np.exp(-f_tip))
     return np.clip(F, 1e-3, 1.0)
 
 
-def update_induction_factors(phi_rad, sigma, C_n, C_t, F, a_old):
+def update_induction_factors(phi_rad, sigma, C_n, C_t, F, a_old, corr=0.1, eps=1e-6):
     """
-    Update axial (a) and tangential (a') induction factors using Glauert correction and Prandtl's factor.
+    Update axial and tangential induction factors using Glauert’s correction.
 
-    Parameters:
-        phi_rad (float): Flow angle [rad].
-        sigma (float): Local solidity [-].
-        C_n (pd.Series): Normal force coefficient.
-        C_t (pd.Series): Tangential force coefficient.
-        F (float): Prandtl's tip loss factor.
-        a_old (float): Previous axial induction factor.
+    Parameters
+    ----------
+    phi_rad : float
+        Flow angle [rad].
+    sigma : float
+        Local solidity.
+    C_n : float
+        Normal force coefficient.
+    C_t : float
+        Tangential force coefficient.
+    F : float
+        Tip loss factor.
+    a_old : float
+        Previous value of axial induction factor.
+    corr : float, optional
+        Relaxation factor for iteration. Default is 0.1.
+    eps : float, optional
+        Small number to avoid division by zero. Default is 1e-6.
 
-    Returns:
-        tuple[float, float]: (updated axial a, tangential a' induction factors)
+    Returns
+    -------
+    tuple (float, float)
+        Updated axial and tangential induction factors (a, a_prime).
     """
-    eps = 1e-6
     sin_phi = np.sin(phi_rad)
     cos_phi = np.cos(phi_rad)
-    corr = 0.1  # smoothing factor
+    sin_phi_sq = sin_phi ** 2
 
     if a_old <= 1/3:
-        C_T = 4 * a_old * F * (1 - a_old)
-        a_star = (1 - a_old) * (sigma * C_n.mean()) / (4 * F * sin_phi**2 + eps)
+        a_star = (1 - a_old) * sigma * C_n / (4 * F * sin_phi_sq + eps)
     else:
-        C_T = ((1 - a_old)**2 * C_n.mean() * sigma) / (sin_phi**2 + eps)
-        a_star = C_T / (4 * F * (1 - 0.25 * (5 - 3 * a_old) * a_old) + eps)
+        CT = ((1 - a_old)**2) * C_n * sigma / (sin_phi_sq + eps)
+        a_star = CT / (4 * F * (1 - 0.25 * (5 - 3 * a_old) * a_old) + eps)
+
+    a_prime_star = (1 - a_old) * sigma * C_t / (4 * F * sin_phi * cos_phi + eps)
 
     a_new = corr * a_star + (1 - corr) * a_old
-    a_prime_star = (1 - a_old) * sigma * C_t.mean() / (4 * F * sin_phi * cos_phi + eps)
-    a_prime_new = corr * a_prime_star  # assume a_prime initially 0
+    a_prime_new = corr * a_prime_star + (1 - corr) * a_prime_star  # assumes no history for a_prime
 
     return a_new, a_prime_new
 
-
-def compute_local_thrust(r_series, V_0, a, RHO, dr):
+def calc_relative_velocity_and_forces(V_0, omega, r, a, a_prime, RHO, chord, Cn, Ct):
     """
-    Compute differential thrust dT per element.
+    Compute relative wind velocity and aerodynamic forces (normal and tangential)
+    at a blade element.
 
-    Parameters:
-        r_series (pd.Series): Local radial position [m].
-        V_0 (float): Wind speed [m/s].
-        a (float): Axial induction factor.
-        RHO (float): Air density [kg/m³].
-        dr (float): Radial increment [m].
+    Parameters
+    ----------
+    V_0 : float
+        Freestream wind speed [m/s].
+    omega : float
+        Angular velocity of the rotor [rad/s].
+    r : float
+        Radial position of the blade element [m].
+    a : float
+        Axial induction factor.
+    a_prime : float
+        Tangential induction factor.
+    RHO : float
+        Air density [kg/m^3].
+    chord : float
+        Local chord length [m].
+    Cn : float
+        Normal force coefficient.
+    Ct : float
+        Tangential force coefficient.
 
-    Returns:
-        pd.Series: Local thrust force [N].
+    Returns
+    -------
+    tuple
+        (v_rel, p_n, p_t)
+        v_rel : float
+            Relative wind speed at the blade element [m/s].
+        p_n : float
+            Normal (thrust) force per unit span [N/m].
+        p_t : float
+            Tangential (torque) force per unit span [N/m].
     """
-    return 4 * np.pi * r_series * RHO * V_0**2 * a * (1 - a) * dr
+    tangential = omega * r * (1 + a_prime)
+    axial = V_0 * (1 - a)
+    v_rel = np.sqrt(tangential**2 + axial**2)
 
+    q = 0.5 * RHO * v_rel**2  # dynamic pressure
+    p_n = q * chord * Cn
+    p_t = q * chord * Ct
 
-def compute_local_torque(r_series, V_0, a, a_prime, omega, RHO, dr):
+    return v_rel, p_n, p_t
+
+def compute_local_thrust(r_series, V_0, a_series, RHO, dr):
     """
-    Compute differential torque dM per element.
+    Compute local thrust across blade span (differential form).
 
-    Parameters:
-        r_series (pd.Series): Local radial position [m].
-        V_0 (float): Wind speed [m/s].
-        a (float): Axial induction factor.
-        a_prime (float): Tangential induction factor.
-        omega (float): Rotational speed [rad/s].
-        RHO (float): Air density [kg/m³].
-        dr (float): Radial increment [m].
+    Parameters
+    ----------
+    r_series : array-like
+        Radial positions [m].
+    V_0 : float
+        Freestream wind speed [m/s].
+    a_series : array-like
+        Axial induction factors along blade.
+    RHO : float
+        Air density [kg/m^3].
+    dr : float
+        Radial differential length [m].
 
-    Returns:
-        pd.Series: Local torque [Nm].
+    Returns
+    -------
+    np.ndarray
+        Local thrust forces per element [N].
     """
-    return 4 * np.pi * r_series**3 * RHO * V_0 * omega * a_prime * (1 - a) * dr
+    return 4 * np.pi * r_series * RHO * V_0**2 * a_series * (1 - a_series) * dr
 
 
 def compute_rotor_coefficients(T, P, RHO, R, V_0):
     """
-    Compute non-dimensional thrust and power coefficients.
+    Compute power and thrust coefficients (Cp, Ct) from rotor outputs.
 
-    Parameters:
-        T (float): Total thrust [N].
-        P (float): Total power [W].
-        RHO (float): Air density [kg/m³].
-        R (float): Rotor radius [m].
-        V_0 (pd.Series): Wind speed [m/s].
+    Parameters
+    ----------
+    T : float
+        Total thrust [N].
+    P : float
+        Total power [W].
+    RHO : float
+        Air density [kg/m^3].
+    R : float
+        Rotor radius [m].
+    V_0 : float
+        Freestream wind speed [m/s].
 
-    Returns:
-        tuple[float, float]: (C_T, C_P)
+    Returns
+    -------
+    tuple (float, float)
+        Power coefficient Cp, thrust coefficient Ct.
     """
     A = np.pi * R**2
-    V0_mean = V_0.mean()
-    C_T = T / (0.5 * RHO * A * V0_mean**2)
-    C_P = P / (0.5 * RHO * A * V0_mean**3)
-    return C_T, C_P
+    P_wind = 0.5 * RHO * A * V_0**3
+    CP = P / P_wind
+    CT = T / (0.5 * RHO * A * V_0**2)
+    return CP, CT
 
 
-def compute_totals_and_coefficients(dT, dM, omega_scalar, dr, RHO, R, V_0):
+def compute_totals_and_coefficients(dT, dM, omega, r_used, RHO, R, V_0, RATED_POWER):
     """
-    Compute total thrust, torque, power, and rotor coefficients.
+    Integrate elemental thrust and torque to compute total performance metrics.
 
-    Parameters:
-        dT (pd.Series): Local thrust values [N].
-        dM (pd.Series): Local torque values [Nm].
-        omega_scalar (float): Rotational speed [rad/s].
-        dr (float): Radial resolution [m].
-        RHO (float): Air density [kg/m³].
-        R (float): Rotor radius [m].
-        V_0 (pd.Series): Inflow wind speed [m/s].
+    Parameters
+    ----------
+    dT : list
+        Elemental thrust forces [N].
+    dM : list
+        Elemental torque values [Nm].
+    omega : float
+        Rotor speed [rad/s].
+    r_used : list
+        Radial positions [m].
+    RHO : float
+        Air density [kg/m^3].
+    R : float
+        Rotor radius [m].
+    V_0 : float
+        Freestream wind speed [m/s].
+    RATED_POWER : float
+        Maximum rated output power [W].
 
-    Returns:
-        tuple[float, float, float, float, float]: (T, M, P, C_T, C_P)
+    Returns
+    -------
+    tuple (T, M, P_total, CP, CT)
+        Total thrust, torque, power, and non-dimensional performance coefficients.
     """
-    T = np.trapz(dT, dx=dr)
-    M = np.trapz(dM, dx=dr)
-    P = np.trapz((dM / dr).values * omega_scalar, dx=dr)
-    C_T, C_P = compute_rotor_coefficients(T, P, RHO, R, V_0)
-    return T, M, P, C_T, C_P
+    T = np.trapz(dT, x=r_used)
+    M = np.trapz(dM, x=r_used)
+    P_total = M * omega
+    P_wind = 0.5 * RHO * np.pi * R**2 * V_0**3
 
+    if P_total > RATED_POWER:
+        P_total = RATED_POWER
 
-def print_summary(T, M, P, C_T, C_P):
-    """
-    Print final rotor performance summary.
+    CP = P_total / P_wind
+    CT = T / (0.5 * RHO * np.pi * R**2 * V_0**2)
 
-    Parameters:
-        T (float): Thrust [N].
-        M (float): Torque [Nm].
-        P (float): Power [W].
-        C_T (float): Thrust coefficient.
-        C_P (float): Power coefficient.
-    """
-    print(f"Thrust (T): {T:.2f} N")
-    print(f"Torque (M): {M:.2f} Nm")
-    print(f"Power (P): {P:.2f} W")
-    print(f"Thrust Coefficient (C_T): {C_T:.4f}")
-    print(f"Power Coefficient (C_P): {C_P:.4f}")
+    return T, M, P_total, CP, CT
