@@ -15,4 +15,8 @@ RADIUS: 120
 AIR_DENSITY: 1.225
 NUMBER_BLADES: 3
 TOLERANCE: 1e-8
-DR: 0.1 # Radial element width
+MAX_ITER: 1000
+RATED_POWER: 15000000      # W
+CORRECTION_FACTOR: 0.1    # Relaxation factor for induction updates
+EPSILON: 1e-6              # Small value to avoid division by zero
+# DR: 0.1 # Radial element width
