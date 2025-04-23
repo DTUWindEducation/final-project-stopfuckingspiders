@@ -172,7 +172,6 @@ class WindTurbinePerformanceData:
             print("No data loaded")
             return
             
-        import matplotlib.pyplot as plt
         
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8))
         

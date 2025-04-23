@@ -136,7 +136,7 @@ def plot_wind_turbine(R=10, r=3, dr=1, r_hub=0.6, tower_height=25, num_blades=3)
 
 
 # Call the function to test it
-plot_wind_turbine()
+#plot_wind_turbine()
 
 
 def plot_lift_drag_vs_span(r_s, alpha_list, Cl_list, Cd_list):
@@ -276,6 +276,33 @@ def plot_ct_curve(V_arr, Ct_arr):
     plt.title("Wind Turbine Thrust Coefficient Curve")
     plt.xlabel("Wind Speed (m/s)")
     plt.ylabel("Thrust Coefficient (Ct)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+ 
+def plot_power_curve_opt(wind_speeds, power_output, rated_power=None):
+    plt.figure(figsize=(8, 5))
+    plt.plot(wind_speeds, power_output, 'b-', linewidth=2, label='Power Output')
+    
+    if rated_power is not None:
+        plt.axhline(y=rated_power, color='r', linestyle='--', label='Rated Power')
+    
+    plt.title('Power Curve (Optimal Control Strategy)')
+    plt.xlabel('Wind Speed [m/s]')
+    plt.ylabel('Power [MW]')
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+def plot_thrust_curve_opt(wind_speeds, thrust_values):
+    plt.figure(figsize=(8, 5))
+    plt.plot(wind_speeds, thrust_values, 'g-', linewidth=2, label='Thrust')
+    
+    plt.title('Thrust Curve (Optimal Control Strategy)')
+    plt.xlabel('Wind Speed [m/s]')
+    plt.ylabel('Thrust [N]')
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
