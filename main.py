@@ -131,12 +131,14 @@ print(df[["V_0", "P", "T", "M", "C_P", "C_T"]].round(2).to_string(index=False))
 
 # ------------------------ Plotting ------------------------
 V_arr = df["V_0"].values
-P_arr = df["P"].values / 1e6  # Convert to MW
+P_arr = df["P"].values/1e6 # Convert to MW
 Cp_arr = df["C_P"].values
 T_arr = df["T"].values
+Ct_arr = df["C_T"].values
 
-plot_power_curve(V_arr, P_arr, RATED_POWER)
+plot_power_curve(V_arr, P_arr, RATED_POWER)  # Convert to MW
 plot_cp_curve(V_arr, Cp_arr)
+plot_ct_curve(V_arr, Ct_arr)
 plot_thrust_curve(V_arr, T_arr)
 plot_airfoil_shapes(df_shapes)
 plot_wind_turbine()

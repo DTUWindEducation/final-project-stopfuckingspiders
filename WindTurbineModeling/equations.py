@@ -363,3 +363,4 @@ def compute_totals_and_coefficients(dT, dM, omega, r_used, RHO, R, V_0, RATED_PO
     CT = T / (0.5 * RHO * np.pi * R**2 * V_0**2)
 
     return T, M, P_total, CP, CT
+

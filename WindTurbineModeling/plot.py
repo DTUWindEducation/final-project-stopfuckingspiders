@@ -197,3 +197,86 @@ def plot_induction_factors_vs_span(r_s, a_list, a_prime_list):
     plt.legend()
     plt.tight_layout()
     plt.show()
+
+def plot_power_curve(V_arr, P_arr, RATED_POWER):
+    """
+    Plot the power curve of the wind turbine.
+
+    Parameters:
+    V_arr : array-like
+        Wind speeds [m/s].
+    P_arr : array-like
+        Power output [MW].
+    rated_power : float
+        Rated power of the turbine [MW].
+    """
+    plt.figure(figsize=(10, 5))
+    plt.plot(V_arr, P_arr, label="Power Curve", color='blue')
+    plt.axhline(y=RATED_POWER / 1e6, color='r', linestyle='--', label='Rated Power')
+    plt.title("Wind Turbine Power Curve")
+    plt.xlabel("Wind Speed (m/s)")
+    plt.ylabel("Power Output (MW)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+def plot_cp_curve(V_arr, Cp_arr):
+    """
+    Plot the power coefficient curve of the wind turbine.
+
+    Parameters:
+    V_arr : array-like
+        Wind speeds [m/s].
+    Cp_arr : array-like
+        Power coefficients [-].
+    """
+    plt.figure(figsize=(10, 5))
+    plt.plot(V_arr, Cp_arr, label="Cp Curve", color='green')
+    plt.title("Wind Turbine Power Coefficient Curve")
+    plt.xlabel("Wind Speed (m/s)")
+    plt.ylabel("Power Coefficient (Cp)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+def plot_thrust_curve(V_arr, T_arr):
+    """
+    Plot the thrust curve of the wind turbine.
+
+    Parameters:
+    V_arr : array-like
+        Wind speeds [m/s].
+    T_arr : array-like
+        Thrust forces [kN].
+    """
+    plt.figure(figsize=(10, 5))
+    plt.plot(V_arr, T_arr / 1e3, label="Thrust Curve", color='red')
+    plt.title("Wind Turbine Thrust Curve")
+    plt.xlabel("Wind Speed (m/s)")
+    plt.ylabel("Thrust Force (kN)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+def plot_ct_curve(V_arr, Ct_arr):
+    """
+    Plot the thrust coefficient curve of the wind turbine.
+
+    Parameters:
+    V_arr : array-like
+        Wind speeds [m/s].
+    Ct_arr : array-like
+        Thrust coefficients [-].
+    """
+    plt.figure(figsize=(10, 5))
+    plt.plot(V_arr, Ct_arr, label="Ct Curve", color='purple')
+    plt.title("Wind Turbine Thrust Coefficient Curve")
+    plt.xlabel("Wind Speed (m/s)")
+    plt.ylabel("Thrust Coefficient (Ct)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
