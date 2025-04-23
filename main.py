@@ -142,8 +142,7 @@ plot_ct_curve(V_arr, Ct_arr)
 plot_thrust_curve(V_arr, T_arr)
 plot_airfoil_shapes(df_shapes)
 plot_wind_turbine()
-#power_curve = performance_data.get_power_curve()
-#thrust_curve = performance_data.get_thrust_curve()
+
 
 plt.show()
 print(f"Execution time: {time() - start:.2f} s")
