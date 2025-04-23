@@ -213,7 +213,7 @@ def plot_power_curve(V_arr, P_arr, RATED_POWER):
     plt.figure(figsize=(10, 5))
     plt.plot(V_arr, P_arr, label="Power Curve", color='blue')
     plt.axhline(y=RATED_POWER / 1e6, color='r', linestyle='--', label='Rated Power')
-    plt.title("Wind Turbine Power Curve")
+    plt.title("Wind Turbine Power Curve(BEM)")
     plt.xlabel("Wind Speed (m/s)")
     plt.ylabel("Power Output (MW)")
     plt.grid(True)
@@ -253,7 +253,7 @@ def plot_thrust_curve(V_arr, T_arr):
     """
     plt.figure(figsize=(10, 5))
     plt.plot(V_arr, T_arr / 1e3, label="Thrust Curve", color='red')
-    plt.title("Wind Turbine Thrust Curve")
+    plt.title("Wind Turbine Thrust Curve(BEM)")
     plt.xlabel("Wind Speed (m/s)")
     plt.ylabel("Thrust Force (kN)")
     plt.grid(True)

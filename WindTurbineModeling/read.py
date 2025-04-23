@@ -178,14 +178,14 @@ class WindTurbinePerformanceData:
         
         # Power curve
         ax1.plot(self.data['wind_speed'], self.data['aero_power'], 'b-')
-        ax1.set_title('Power Curve')
+        ax1.set_title('Power Curve(Operational Strategy)')
         ax1.set_xlabel(f"Wind Speed ({self.units.get('wind_speed', 'm/s')})")
         ax1.set_ylabel(f"Power ({self.units.get('aero_power', 'kW')})")
         ax1.grid(True)
         
         # Thrust curve
         ax2.plot(self.data['wind_speed'], self.data['aero_thrust'], 'r-')
-        ax2.set_title('Thrust Curve')
+        ax2.set_title('Thrust Curve(Operational Strategy)')
         ax2.set_xlabel(f"Wind Speed ({self.units.get('wind_speed', 'm/s')})")
         ax2.set_ylabel(f"Thrust ({self.units.get('aero_thrust', 'kN')})")
         ax2.grid(True)
