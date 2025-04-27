@@ -3,6 +3,7 @@ from scipy.interpolate import interp1d
 from scipy.signal import savgol_filter
 from WindTurbineModeling.load import load_operational_settings
 
+#TODO: add docstrings to all functions
 
 def calc_omega(rot_speed_rpm):
     return rot_speed_rpm * (2 * np.pi / 60)
