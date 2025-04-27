@@ -170,3 +170,28 @@ def load_airfoil_coefficients(filepaths: list[Union[str, Path]]) -> tuple[list[d
         dfs.append(df)
 
     return headers, dfs
+
+def generate_wind_speed_range(min_speed, max_speed, n_points=50, rated_region=None):
+    """
+    Generates wind speed range with higher resolution in specified regions
+    
+    Args:
+        min_speed: Minimum wind speed (m/s)
+        max_speed: Maximum wind speed (m/s)
+        n_points: Total number of points
+        rated_region: Tuple of (start, end) for rated wind region
+                     Defaults to (10.0, 11.5) if None
+    """
+    if rated_region is None:
+        rated_region = (10.0, 11.5)
+    
+    rated_points = int(n_points * 0.4)
+    other_points = n_points - rated_points
+    
+    rated_array = np.linspace(rated_region[0], rated_region[1], rated_points)
+    other_array = np.concatenate([
+        np.linspace(min_speed, rated_region[0]-0.1, other_points//2),
+        np.linspace(rated_region[1]+0.1, max_speed, other_points//2)
+    ])
+    
+    return np.sort(np.concatenate([rated_array, other_array]))

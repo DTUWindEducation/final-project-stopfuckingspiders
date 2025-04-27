@@ -2,8 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import pandas as pd
-
-import config as c
+import pandas as pd
+from pathlib import Path
+#import config as c
 
 #For Functions
 import re
@@ -57,3 +58,4 @@ def get_files_by_extension(folder_path: Union[str, Path], extensions: list[str] 
         result.extend(folder_path.rglob(f"*{ext}"))
 
     return result
+
