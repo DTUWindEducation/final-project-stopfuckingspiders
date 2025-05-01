@@ -5,6 +5,10 @@ test*
 .vscode/*
 TASK.md
 plot_turbine.py
+src/WindTurbineModeling/results/*
+WindTurbineModeling/results/*
+results/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
