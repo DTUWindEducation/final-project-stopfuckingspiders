@@ -1,7 +1,7 @@
 # files to ignore in this repo
 #inputs/
 #outputs/
-test*
+test-*
 .vscode/*
 TASK.md
 plot_turbine.py
