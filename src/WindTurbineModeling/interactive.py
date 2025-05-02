@@ -4,9 +4,9 @@ import time
 import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
-from src.WindTurbineModeling.bem_solvers import BEMSolver, BEMSolverOpt
-from src.WindTurbineModeling.config import RATED_POWER, NUMBER_BLADES, R
-from src.WindTurbineModeling.plot import (
+from WindTurbineModeling.bem_solvers import BEMSolver, BEMSolverOpt
+from WindTurbineModeling.config import RATED_POWER, NUMBER_BLADES, R
+from WindTurbineModeling.plot import (
     plot_induction_vs_span,
     plot_induction_vs_v0,
     plot_induction_vs_pitch,
