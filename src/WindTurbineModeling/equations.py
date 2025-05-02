@@ -38,7 +38,6 @@ def calc_normal_tangential_constants(phi_rad, C_l, C_d):
 def calc_local_solidity(NUMBER_BLADES, chord, r):
     return NUMBER_BLADES * chord / (2 * np.pi * r)
 
-
 def calc_prandtl_tip_loss(B, R, r, phi):
     """
     Compute Prandtl's tip loss correction factor.
