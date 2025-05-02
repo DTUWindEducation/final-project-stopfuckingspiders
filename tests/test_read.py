@@ -1,4 +1,4 @@
-from src.WindTurbineModeling.read import *
+from WindTurbineModeling.read import *
 
 import pytest
 
