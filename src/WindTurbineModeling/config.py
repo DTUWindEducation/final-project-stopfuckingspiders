@@ -34,4 +34,4 @@ TOLERANCE = float(setup["TOLERANCE"])
 MAX_ITER = setup['MAX_ITER']
 RATED_POWER = setup['RATED_POWER']
 CORR = setup['CORRECTION_FACTOR']
-EPSILON = setup['EPSILON']
+EPSILON = float(setup['EPSILON'])
