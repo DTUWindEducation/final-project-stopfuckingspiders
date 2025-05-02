@@ -1,4 +1,4 @@
-from WindTurbineModeling.load import *
+from src.WindTurbineModeling.load import *
 import pytest
 
 def test_load_blade_geometry():

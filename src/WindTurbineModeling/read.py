@@ -12,7 +12,7 @@ from typing import Union
 from pathlib import Path
 
 def read_blade_definition(file_path: Union[str, Path]):
-
+    # Does the same as load_blade_geometry
     with open(file_path, "r") as file:
         content = file.readlines()
     

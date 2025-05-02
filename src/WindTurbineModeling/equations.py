@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.interpolate import interp1d
 from scipy.signal import savgol_filter
-from WindTurbineModeling.load import load_operational_settings
+from src.WindTurbineModeling.load import load_operational_settings
 
 #TODO: add docstrings to all functions
 

@@ -1,4 +1,4 @@
-from WindTurbineModeling.equations import *
+from src.WindTurbineModeling.equations import *
 from pandas import DataFrame
 
 def test_calc_omega():
