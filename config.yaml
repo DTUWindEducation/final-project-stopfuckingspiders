@@ -19,4 +19,3 @@ MAX_ITER: 1000
 RATED_POWER: 15000000      # W
 CORRECTION_FACTOR: 0.1    # Relaxation factor for induction updates
 EPSILON: 1e-6              # Small value to avoid division by zero
-# DR: 0.1 # Radial element width
