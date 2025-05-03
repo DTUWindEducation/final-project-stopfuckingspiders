@@ -1,4 +1,8 @@
-#TODO: Add docstrings to all functions and classes
+"""Wind Turbine Blade Element Momentum (BEM) Solver Module.
+
+This module implements both standard and optimal control BEM solvers
+for wind turbine performance analysis.
+"""
 
 import sys
 import os
@@ -63,19 +67,34 @@ except ImportError as e:
     raise
 
 class BaseBEMSolver:
-    """Base class containing common BEM solver functionality"""
+    """Base class for Blade Element Momentum (BEM) solvers.
+    
+    Provides common functionality for both standard and optimal BEM solvers.
+    """
+    
     def __init__(self):
+        """Initialize the BEM solver with default parameters."""
         self.results = None
         self.elemental_data = None
         self.inputs = None
 
     def load_input_data(self):
-        """Load all required input data"""
+        """Load and parse turbine input data from configuration files.
+        
+        Returns:
+            dict: Dictionary containing:
+                - blade_data: DataFrame of blade geometry
+                - settings: DataFrame of operational conditions
+                - airfoil_shapes: Dictionary of airfoil geometries
+                - airfoils: Dictionary of airfoil coefficients
+                - valid_blafids: List of valid airfoil IDs
+        """
         blade_data = load_blade_geometry(BLADE_DEFINITION_INPUT_FILE_PATH)
         blade_data = blade_data[blade_data["BlAFID"] > 1].reset_index(drop=True)
 
         settings = load_operational_settings(OPERATIONAL_CONDITIONS_FILE_PATH)
-        settings = settings[(settings["WindSpeed"] >= 3.0) & (settings["WindSpeed"] <= 25.0)]
+        settings = settings[(settings["WindSpeed"] >= 3.0) & 
+                           (settings["WindSpeed"] <= 25.0)]
 
         airfoil_files = get_files_by_extension(AIRFOIL_DATA, [".dat", ".txt"])
         airfoil_shapes = [f for f in airfoil_files if AIRFOIL_SHAPE_IDENTIFIER in str(f)]
@@ -98,9 +117,34 @@ class BaseBEMSolver:
         }
         return self.inputs
 
-    def solve_blade_element(self, V0, omega, r, pitch, beta, chord, df_polar, num_blades, radius, rho, max_iter, tolerance, af_id):
-        """Solve for a single blade element"""
-        a, a_prime = 0.0, 0.0
+    def solve_blade_element(self, V0, omega, r, pitch, beta, chord, df_polar, 
+                          num_blades, radius, rho, max_iter, tolerance, af_id):
+        """Solve BEM equations for a single blade element.
+        
+        Args:
+            V0 (float): Wind speed (m/s)
+            omega (float): Rotational speed (rad/s)
+            r (float): Radial position (m)
+            pitch (float): Pitch angle (deg)
+            beta (float): Twist angle (deg)
+            chord (float): Chord length (m)
+            df_polar (DataFrame): Airfoil polar data
+            num_blades (int): Number of blades
+            radius (float): Rotor radius (m)
+            rho (float): Air density (kg/m³)
+            max_iter (int): Maximum iterations
+            tolerance (float): Convergence tolerance
+            af_id (int): Airfoil ID
+            
+        Returns:
+            dict: Dictionary containing:
+                - p_n: Normal force (N)
+                - p_t: Tangential force (N)
+                - elemental: Dictionary of elemental results
+            or None if solution fails
+        """
+        a, a_prime = 0.0, 0.0  # Initial induction factors
+
         for _ in range(max_iter):
             phi = calc_flow_angle(V0, omega, r, a, a_prime)
             alpha = calc_local_angle_of_attack(phi, pitch, beta)
@@ -114,7 +158,8 @@ class BaseBEMSolver:
                 break
             a, a_prime = a_new, a_prime_new
 
-        v_rel, p_n, p_t = calc_relative_velocity_and_forces(V0, omega, r, a, a_prime, rho, chord, Cn, Ct)
+        v_rel, p_n, p_t = calc_relative_velocity_and_forces(
+            V0, omega, r, a, a_prime, rho, chord, Cn, Ct)
 
         if np.isnan(Cl) or np.isnan(Cd) or np.isnan(p_t) or Cl == 0 or p_t < 0:
             return None
@@ -131,7 +176,21 @@ class BaseBEMSolver:
         }
 
     def get_plot_data(self):
-        """Prepare data for plotting"""
+        """Prepare results data for visualization.
+        
+        Returns:
+            dict: Dictionary containing:
+                - wind_speeds: Array of wind speeds
+                - power: Array of power values (MW)
+                - thrust: Array of thrust values (kN)
+                - cp: Array of power coefficients
+                - ct: Array of thrust coefficients
+                - pitch: Array of pitch angles (if available)
+                - rpm: Array of RPM values (if available)
+                
+        Raises:
+            ValueError: If solver hasn't been run yet
+        """
         if not hasattr(self, 'results'):
             raise ValueError("Run the solver first.")
 
@@ -150,21 +209,36 @@ class BaseBEMSolver:
         return data
 
     def save_results(self, results, elemental_data, airfoil_data, prefix=""):
-        """Save results to CSV files"""
+        """Save solver results to CSV files.
+        
+        Args:
+            results (list): Summary results
+            elemental_data (dict): Elemental force data
+            airfoil_data (dict): Airfoil coefficient data
+            prefix (str): Optional filename prefix
+        """
         output_dir = Path("results")
         output_dir.mkdir(exist_ok=True)
 
-        pd.DataFrame(results).sort_values("V_0").to_csv(output_dir / f"{prefix}performance_summary.csv", index=False)
-        pd.DataFrame(elemental_data).to_csv(output_dir / f"{prefix}elemental_data.csv", index=False)
+        pd.DataFrame(results).sort_values("V_0").to_csv(
+            output_dir / f"{prefix}performance_summary.csv", index=False)
+        pd.DataFrame(elemental_data).to_csv(
+            output_dir / f"{prefix}elemental_data.csv", index=False)
 
         airfoil_dir = output_dir / "airfoils"
         airfoil_dir.mkdir(exist_ok=True)
         for af_id, df in airfoil_data.items():
             df.to_csv(airfoil_dir / f"airfoil_{af_id}.csv", index=False)
 
+
 class BEMSolver(BaseBEMSolver):
-    """Standard BEM Solver"""
+    """Standard BEM Solver implementation.
+    
+    Solves the BEM equations using fixed operational settings.
+    """
+    
     def run(self):
+        """Execute the complete BEM analysis workflow."""
         print("1. Loading and parsing the provided turbine data...")
         inputs = self.load_input_data()
 
@@ -177,6 +251,14 @@ class BEMSolver(BaseBEMSolver):
         print("4. Preparing data for plotting...")
 
     def perform_bem_calculations(self, inputs):
+        """Perform BEM calculations for all operational conditions.
+        
+        Args:
+            inputs (dict): Input data dictionary
+            
+        Returns:
+            tuple: (summary_results, elemental_data)
+        """
         summary_results = []
         elemental_data = defaultdict(list)
 
@@ -192,7 +274,8 @@ class BEMSolver(BaseBEMSolver):
             omega = calc_omega(row.RotSpeed)
 
             condition_results = self.calculate_single_condition(
-                V0, pitch, omega, r_s, blade_data, inputs['valid_blafids'], inputs['airfoils']
+                V0, pitch, omega, r_s, blade_data, 
+                inputs['valid_blafids'], inputs['airfoils']
             )
             summary_results.append(condition_results['summary'])
             for key, values in condition_results['elemental'].items():
@@ -202,14 +285,35 @@ class BEMSolver(BaseBEMSolver):
         self.elemental_data = elemental_data
         return summary_results, elemental_data
 
-    def calculate_single_condition(self, V0, pitch, omega, r_s, blade_data, valid_blafids, airfoils):
+    def calculate_single_condition(self, V0, pitch, omega, r_s, blade_data, 
+                                 valid_blafids, airfoils):
+        """Calculate BEM solution for a single wind speed condition.
+        
+        Args:
+            V0 (float): Wind speed (m/s)
+            pitch (float): Pitch angle (deg)
+            omega (float): Rotational speed (rad/s)
+            r_s (ndarray): Array of radial positions
+            blade_data (DataFrame): Blade geometry data
+            valid_blafids (list): Valid airfoil IDs
+            airfoils (dict): Airfoil coefficient data
+            
+        Returns:
+            dict: Dictionary containing summary and elemental results
+        """
         elemental = defaultdict(list)
         dT_list, dM_list, r_used = [], [], []
 
         for r, af_id in zip(r_s, blade_data['BlAFID']):
-            beta, chord = interpolate_blade_geometry(r, blade_data['BlSpn'], blade_data['BlTwist'], blade_data['BlChord'])
+            beta, chord = interpolate_blade_geometry(
+                r, blade_data['BlSpn'], 
+                blade_data['BlTwist'], blade_data['BlChord']
+            )
             df_polar = airfoils[valid_blafids.index(af_id)]
-            bem_result = self.solve_blade_element(V0, omega, r, pitch, beta, chord, df_polar, NUMBER_BLADES, R, RHO, MAX_ITER, TOLERANCE, af_id)
+            bem_result = self.solve_blade_element(
+                V0, omega, r, pitch, beta, chord, df_polar, 
+                NUMBER_BLADES, R, RHO, MAX_ITER, TOLERANCE, af_id
+            )
 
             if bem_result:
                 for key, value in bem_result['elemental'].items():
@@ -218,7 +322,8 @@ class BEMSolver(BaseBEMSolver):
                 dM_list.append(NUMBER_BLADES * r * bem_result['p_t'])
                 r_used.append(r)
 
-        T, M, P_total, CP, CT = compute_totals_and_coefficients(dT_list, dM_list, omega, r_used, RHO, R, V0, RATED_POWER)
+        T, M, P_total, CP, CT = compute_totals_and_coefficients(
+            dT_list, dM_list, omega, r_used, RHO, R, V0, RATED_POWER)
 
         return {
             'summary': {
@@ -228,9 +333,15 @@ class BEMSolver(BaseBEMSolver):
             'elemental': elemental
         }
 
+
 class BEMSolverOpt(BaseBEMSolver):
-    """Optimal Control BEM Solver"""
+    """Optimal Control BEM Solver implementation.
+    
+    Solves the BEM equations using optimal pitch and RPM strategies.
+    """
+    
     def __init__(self):
+        """Initialize the optimal BEM solver."""
         super().__init__()
         self.pitch_interp = None
         self.rpm_interp = None
@@ -238,6 +349,7 @@ class BEMSolverOpt(BaseBEMSolver):
         self.max_ws = None
 
     def run(self):
+        """Execute the complete optimal BEM analysis workflow."""
         print("1. Loading and parsing the provided turbine data...")
         inputs = self.load_input_data()
 
@@ -253,6 +365,11 @@ class BEMSolverOpt(BaseBEMSolver):
         print("5. Preparing data for plotting...")
 
     def setup_optimal_strategy(self, inputs):
+        """Initialize optimal pitch and RPM interpolation functions.
+        
+        Args:
+            inputs (dict): Input data dictionary
+        """
         operational_data = inputs['settings'][['WindSpeed', 'PitchAngle', 'RotSpeed']].values
         wind_speeds = operational_data[:, 0]
         pitches = savgol_filter(operational_data[:, 1], 5, 2)
@@ -263,13 +380,26 @@ class BEMSolverOpt(BaseBEMSolver):
         self.min_ws, self.max_ws = min(wind_speeds), max(wind_speeds)
 
     def generate_wind_speed_range(self):
+        """Generate a non-linear wind speed range for analysis.
+        
+        Returns:
+            ndarray: Array of wind speeds with higher resolution near rated speed
+        """
         return np.concatenate([
             np.linspace(self.min_ws, 10.0, 15),
-            np.linspace(10.1, 11.5, 10),
+            np.linspace(10.1, 11.5, 10),  # Higher resolution near rated speed
             np.linspace(11.6, self.max_ws, 15)
         ])
 
     def perform_optimal_calculations(self, inputs):
+        """Perform BEM calculations using optimal control strategy.
+        
+        Args:
+            inputs (dict): Input data dictionary
+            
+        Returns:
+            tuple: (summary_results, elemental_data)
+        """
         summary_results = []
         elemental_data = defaultdict(list)
         wind_speed_range = self.generate_wind_speed_range()
@@ -296,15 +426,35 @@ class BEMSolverOpt(BaseBEMSolver):
         self.elemental_data = elemental_data
         return summary_results, elemental_data
 
-    def calculate_single_condition(self, V0, pitch, omega, r_s, blade_data, valid_blafids, airfoils):
+    def calculate_single_condition(self, V0, pitch, omega, r_s, blade_data, 
+                                 valid_blafids, airfoils):
+        """Calculate BEM solution for a single wind speed condition (optimal version).
+        
+        Args:
+            V0 (float): Wind speed (m/s)
+            pitch (float): Pitch angle (deg)
+            omega (float): Rotational speed (rad/s)
+            r_s (ndarray): Array of radial positions
+            blade_data (DataFrame): Blade geometry data
+            valid_blafids (list): Valid airfoil IDs
+            airfoils (dict): Airfoil coefficient data
+            
+        Returns:
+            dict: Dictionary containing summary and elemental results
+        """
         elemental = defaultdict(list)
         dT_list, dM_list, r_used = [], [], []
 
         for r, af_id in zip(r_s, blade_data['BlAFID']):
-            beta, chord = interpolate_blade_geometry(r, blade_data['BlSpn'], blade_data['BlTwist'], blade_data['BlChord'])
+            beta, chord = interpolate_blade_geometry(
+                r, blade_data['BlSpn'], 
+                blade_data['BlTwist'], blade_data['BlChord']
+            )
             df_polar = airfoils[valid_blafids.index(af_id)]
-            bem_result = self.solve_blade_element(V0, omega, r, pitch, beta, chord, df_polar,
-                                                NUMBER_BLADES, R, RHO, MAX_ITER, TOLERANCE, af_id)
+            bem_result = self.solve_blade_element(
+                V0, omega, r, pitch, beta, chord, df_polar,
+                NUMBER_BLADES, R, RHO, MAX_ITER, TOLERANCE, af_id
+            )
 
             if bem_result:
                 for key, value in bem_result['elemental'].items():
