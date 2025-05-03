@@ -35,9 +35,9 @@ class ResultPlotter:
 
     def run_solver(self):
         """Ask user to run Standard or Optimal solver"""
-        print("\n🛠️ Choose Solver to Run:")
-        print("1. Standard BEM Solver")
-        print("2. Optimal Control BEM Solver")
+        print("\n Choose Solver to Run:")
+        print("1. Standard BEM Solver (Functional requirements 1-5)")
+        print("2. Optimal Control BEM Solver (Functional requirements 6-7)")
         choice = input("Enter 1 or 2: ").strip()
 
         if choice == '1':
@@ -52,15 +52,15 @@ class ResultPlotter:
 
         print(f"\n🚀 Running {self.solver_type} BEM Solver...")
         start_time = time.time()
-        self.solver.run()
+        self.solver.run()  # will print step-by-step progress internally
         end_time = time.time()
-        print(f"✅ {self.solver_type} Solver Completed in {end_time - start_time:.2f} seconds.")
+        print(f"✅ {self.solver_type} Solver completed in {end_time - start_time:.2f} seconds.\n")
 
-        # 👇 NEW: what to do after solving
         if self.solver_type == "Standard":
             self.plot_menu()
-        else:  # Optimal
+        else:
             self.optimal_control_menu()
+
 
     def optimal_control_menu(self):
         """Menu after Optimal Control Solver"""

@@ -165,10 +165,16 @@ class BaseBEMSolver:
 class BEMSolver(BaseBEMSolver):
     """Standard BEM Solver"""
     def run(self):
-        start_time = time()
+        print("1. Loading and parsing the provided turbine data...")
         inputs = self.load_input_data()
+
+        print("2. Performing BEM calculations:")
         summary_results, elemental_data = self.perform_bem_calculations(inputs)
+
+        print("3. Saving results...")
         self.save_results(summary_results, elemental_data, inputs['airfoils'])
+
+        print("4. Preparing data for plotting...")
 
     def perform_bem_calculations(self, inputs):
         summary_results = []
@@ -178,10 +184,12 @@ class BEMSolver(BaseBEMSolver):
         settings = inputs['settings']
         r_s = blade_data['BlSpn'].values
 
-        for _, row in settings.iterrows():
-            V0 = row['WindSpeed']
-            pitch = row['PitchAngle']
-            omega = calc_omega(row['RotSpeed'])
+        for i, row in enumerate(settings.itertuples(), start=1):
+            V0 = row.WindSpeed
+            print(f"   → [{i}/{len(settings)}] Solving for wind speed: {V0:.1f} m/s")
+
+            pitch = row.PitchAngle
+            omega = calc_omega(row.RotSpeed)
 
             condition_results = self.calculate_single_condition(
                 V0, pitch, omega, r_s, blade_data, inputs['valid_blafids'], inputs['airfoils']
@@ -230,11 +238,19 @@ class BEMSolverOpt(BaseBEMSolver):
         self.max_ws = None
 
     def run(self):
-        start_time = time()
+        print("1. Loading and parsing the provided turbine data...")
         inputs = self.load_input_data()
+
+        print("2. Setting up optimal control strategy...")
         self.setup_optimal_strategy(inputs)
+
+        print("3. Performing BEM calculations using optimal pitch/RPM...")
         summary_results, elemental_data = self.perform_optimal_calculations(inputs)
+
+        print("4. Saving results...")
         self.save_results(summary_results, elemental_data, inputs['airfoils'], "optimal_")
+
+        print("5. Preparing data for plotting...")
 
     def setup_optimal_strategy(self, inputs):
         operational_data = inputs['settings'][['WindSpeed', 'PitchAngle', 'RotSpeed']].values
@@ -258,7 +274,9 @@ class BEMSolverOpt(BaseBEMSolver):
         elemental_data = defaultdict(list)
         wind_speed_range = self.generate_wind_speed_range()
 
-        for V0 in wind_speed_range:
+        for i, V0 in enumerate(wind_speed_range, start=1):
+            print(f"   → [{i}/{len(wind_speed_range)}] Solving for V₀ = {V0:.2f} m/s using optimal control...")
+
             pitch = float(self.pitch_interp(V0))
             rpm = float(self.rpm_interp(V0))
             omega = calc_omega(rpm)
