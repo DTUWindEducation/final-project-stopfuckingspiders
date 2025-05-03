@@ -7,7 +7,7 @@ optimal control Blade Element Momentum (BEM) simulation for wind turbine perform
 How to Run:
 -----------
 From the terminal or command line, execute:
-    python main.py
+    python examples/main.py 
 
 Workflow:
 ---------
