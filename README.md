@@ -56,13 +56,54 @@ conda activate WindTurbines
 python examples/main.py
 ```
 
-
-
-## Architecture
+## 📁 Package Architecture
 
 This package follows a modular design to cleanly separate data handling, computation, and visualization:
 
+```
+src/WindTurbineModeling/
+├── __init__.py            # Exposes top-level classes and modules
+├── bem_solvers.py         # Core BEM solver logic (standard and optimal)
+├── config.py              # Loads and manages global configuration settings
+├── equations.py           # Core aerodynamic computations and helper functions
+├── interactive.py         # Interactive CLI interface for running solvers and visualizing results
+├── load.py                # Functions to load geometry, settings, and airfoil data
+├── plot.py                # Visualization functions for performance and geometry
+├── read.py                # File reading utilities for geometry and data discovery
+```
+
 ![Architecture Overview](examples/architecture.png)
+
+
+## ⚙️ Implemented Classes
+
+### `BEMSolver` (in `bem_solvers.py`)
+Implements a standard Blade Element Momentum (BEM) solver for calculating thrust, torque, and power across varying wind conditions.
+
+**Key Methods:**
+- `run()`: Main workflow—loads input data, runs the solver, saves results.
+- `perform_bem_calculations()`: Executes BEM computations for all conditions.
+- `calculate_single_condition()`: Solves for one wind speed condition.
+- `solve_blade_element()`: Core iterative solver for a single blade element.
+- `get_plot_data()`: Returns solver output formatted for plotting.
+- `save_results()`: Saves summary and elemental results as CSV files.
+
+### `BEMSolverOpt` (in `bem_solvers.py`)
+Extension of `BaseBEMSolver` for optimal control strategy (details not shown in current files).
+
+### `BaseBEMSolver` (in `bem_solvers.py`)
+Provides foundational methods for loading data, solving elements, and saving results. Parent class for both `BEMSolver` and `BEMSolverOpt`.
+
+### `ResultPlotter` (in `interactive.py`)
+Provides an interactive CLI for:
+- Selecting and running solvers (`BEMSolver`, `BEMSolverOpt`)
+- Visualizing performance plots like Cp, Ct, thrust, power, induction factors, etc.
+- Saving results and generated figures
+
+
+## 🧠 Notes
+- Configuration is driven by `config.yaml` loaded through `config.py`
+- All numerical methods use constants and thresholds defined in the config for consistent behavior
 
 ### Configuration
 
