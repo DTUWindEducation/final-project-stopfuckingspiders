@@ -12,6 +12,17 @@ from mpl_toolkits.mplot3d import Axes3D
 
 
 def plot_airfoil_shapes(airfoil_data_list, labels=None):
+    """
+    Plots the shapes of airfoils based on provided data.
+
+    Parameters:
+        airfoil_data_list (list of pandas.DataFrame): A list of dataframes, each containing 
+            airfoil coordinates with columns "x/c" and "y/c".
+        labels (list of str, optional): A list of labels for each airfoil. Defaults to None.
+
+    Returns:
+        None: Displays the plot of airfoil shapes.
+    """
     plt.figure(figsize=(12, 6))
     for i, df in enumerate(airfoil_data_list):
         x, y = df["x/c"], df["y/c"]
@@ -27,6 +38,18 @@ def plot_airfoil_shapes(airfoil_data_list, labels=None):
     plt.show()
 
 def plot_wind_turbine(R=10, r=3, dr=1, r_hub=0.6, tower_height=25, num_blades=3):
+    """
+    Plots a schematic representation of a wind turbine.
+    Parameters:
+        R (float): Radius of the rotor (outermost blade length). Default is 10.
+        r (float): Radius of the inner dashed circle. Default is 3.
+        dr (float): Thickness of the rotor region (difference between R and the middle dashed circle). Default is 1.
+        r_hub (float): Radius of the hub. Default is 0.6.
+        tower_height (float): Height of the wind turbine tower. Default is 25.
+        num_blades (int): Number of blades on the wind turbine. Default is 3.
+    Returns:
+        None: Displays the wind turbine plot.
+    """
     fig, ax = plt.subplots(figsize=(6, 10))
     ax.set_aspect('equal')
     ax.axis('off')
@@ -63,6 +86,17 @@ def plot_wind_turbine(R=10, r=3, dr=1, r_hub=0.6, tower_height=25, num_blades=3)
     plt.show()
 
 def plot_power_curve(wind_speeds, powers, rated_power=None):
+    """
+    Plots the power curve of a wind turbine.
+
+    Parameters:
+        wind_speeds (list or array-like): Wind speeds in m/s.
+        powers (list or array-like): Corresponding power outputs in MW.
+        rated_power (float, optional): Rated power of the turbine in watts. Defaults to None.
+
+    Returns:
+        None: Displays the plot.
+    """
     plt.figure(figsize=(10,6))
     plt.plot(wind_speeds, powers, 'b-', label='Power Output')
     if rated_power:
@@ -76,6 +110,16 @@ def plot_power_curve(wind_speeds, powers, rated_power=None):
     plt.show()
 
 def plot_thrust_curve(wind_speeds, thrusts):
+    """
+    Plots the thrust curve of a wind turbine.
+
+    Parameters:
+    wind_speeds (list or array-like): Wind speeds in meters per second (m/s).
+    thrusts (list or array-like): Corresponding thrust values in Newtons (N).
+
+    Returns:
+    None
+    """
     plt.figure(figsize=(10,6))
     plt.plot(wind_speeds, np.array(thrusts)/1e3, 'g-', label='Thrust Curve')
     plt.xlabel('Wind Speed (m/s)')
@@ -87,6 +131,16 @@ def plot_thrust_curve(wind_speeds, thrusts):
     plt.show()
 
 def plot_cp_curve(wind_speeds, cp_values):
+    """
+    Plots the power coefficient (Cp) curve against wind speeds.
+
+    Parameters:
+    wind_speeds (list or array-like): Wind speeds in meters per second.
+    cp_values (list or array-like): Corresponding power coefficient values.
+
+    Returns:
+    None
+    """
     plt.figure(figsize=(10,6))
     plt.plot(wind_speeds, cp_values, 'm-', label='Cp Curve')
     plt.xlabel('Wind Speed (m/s)')
@@ -98,6 +152,16 @@ def plot_cp_curve(wind_speeds, cp_values):
     plt.show()
 
 def plot_ct_curve(wind_speeds, ct_values):
+    """
+    Plots the thrust coefficient (Ct) curve against wind speeds.
+
+    Parameters:
+    wind_speeds (list or array-like): Wind speeds in meters per second.
+    ct_values (list or array-like): Corresponding thrust coefficient values.
+
+    Returns:
+    None
+    """
     plt.figure(figsize=(10,6))
     plt.plot(wind_speeds, ct_values, 'c-', label='Ct Curve')
     plt.xlabel('Wind Speed (m/s)')
@@ -109,8 +173,17 @@ def plot_ct_curve(wind_speeds, ct_values):
     plt.show()
 
 def plot_induction_vs_span(elemental_data):
-    """Plot axial (a) and tangential (a') induction factors vs span (r), grouped by V0, in two subplots"""
-
+    """
+    Plots axial (a) and tangential (a') induction factors against span (r) in two subplots, grouped by wind speed (V0).
+    Parameters:
+        elemental_data (dict): A dictionary containing the following keys:
+            - 'r' (array-like): Span positions [m].
+            - 'V0' (array-like): Wind speeds [m/s].
+            - 'a' (array-like): Axial induction factors.
+            - 'a_prime' (array-like): Tangential induction factors.
+    Returns:
+        None: Displays the plot.
+    """
     r = np.array(elemental_data['r'])
     V0 = np.array(elemental_data['V0'])
     a = np.array(elemental_data['a'])
@@ -152,6 +225,13 @@ def plot_induction_vs_span(elemental_data):
     plt.show()
 
 def plot_induction_vs_v0(solver):
+    """
+    Plots the axial and tangential induction factors against wind speed.
+    Parameters:
+        solver (object): An object containing simulation results and elemental data.
+    Returns:
+        None: Displays a plot of induction factors versus wind speed.
+    """
     V0_list, a_list, a_prime_list = [], [], []
     for res in solver.results:
         V0 = res['V_0']
@@ -174,6 +254,13 @@ def plot_induction_vs_v0(solver):
     plt.show()
 
 def plot_induction_vs_pitch(solver):
+    """
+    Plots the induction factors (axial and tangential) against the pitch angle.
+    Parameters:
+        solver (object): An object containing simulation results and elemental data.
+    Returns:
+        None: Displays a plot of induction factors vs pitch angle.
+    """
     pitch_list, a_list, a_prime_list = [], [], []
     for res in solver.results:
         pitch = res['pitch']
@@ -196,6 +283,13 @@ def plot_induction_vs_pitch(solver):
     plt.show()
 
 def plot_induction_vs_omega(solver):
+    """
+    Plots the induction factors (axial and tangential) against the rotational speed.
+    Parameters:
+        solver (object): An object containing simulation results and elemental data.
+    Returns:
+        None: Displays a plot of induction factors vs rotational speed.
+    """
     omega_list, a_list, a_prime_list = [], [], []
     for res in solver.results:
         omega = res['omega']
@@ -218,8 +312,17 @@ def plot_induction_vs_omega(solver):
     plt.show()
 
 def plot_cl_cd_vs_span(elemental_data):
-    """Plot lift (Cl) and drag (Cd) coefficients separately vs span r, grouped by V0"""
-
+    """
+    Plots lift (Cl) and drag (Cd) coefficients versus span position (r), grouped by wind speed (V0).
+    Parameters:
+        elemental_data (dict): A dictionary containing the following keys:
+            - 'r' (array-like): Span positions [m].
+            - 'V0' (array-like): Wind speeds [m/s].
+            - 'Cl' (array-like): Lift coefficients.
+            - 'Cd' (array-like): Drag coefficients.
+    Returns:
+        None: Displays the plot.
+    """
     r = np.array(elemental_data['r'])
     V0 = np.array(elemental_data['V0'])
     Cl = np.array(elemental_data['Cl'])
@@ -261,8 +364,13 @@ def plot_cl_cd_vs_span(elemental_data):
     plt.show()
 
 def plot_cl_cd_vs_alpha(elemental_data):
-    """Plot Lift (Cl) and Drag (Cd) coefficients vs Angle of Attack α, clean with two subplots"""
-
+    """
+    Plots the Lift (Cl) and Drag (Cd) coefficients against the Angle of Attack (α) using two subplots.
+    Parameters:
+        elemental_data (dict): A dictionary containing 'alpha', 'Cl', and 'Cd' as keys with corresponding numerical data.
+    Returns:
+        None: Displays the plot.
+    """
     alpha = np.array(elemental_data['alpha'])
     Cl = np.array(elemental_data['Cl'])
     Cd = np.array(elemental_data['Cd'])
@@ -292,6 +400,14 @@ def plot_cl_cd_vs_alpha(elemental_data):
     plt.show()
 
 def plot_moment_vs_v0(results):
+    """
+    Plots the relationship between wind speed (V0) and moment (M).
+    Parameters:
+        results (list of dict): A list of dictionaries where each dictionary contains
+                                'V_0' (wind speed in m/s) and 'M' (moment in Nm).
+    Returns:
+        None: Displays a plot of Moment vs Wind Speed.
+    """
     V0 = [res['V_0'] for res in results]
     M = [res['M'] for res in results]
 
@@ -305,6 +421,15 @@ def plot_moment_vs_v0(results):
     plt.show()
 
 def plot_thrust_vs_pitch(results):
+    """
+    Plots the thrust (T) versus pitch angle (θp) based on the given results.
+    Parameters:
+        results (list of dict): A list of dictionaries where each dictionary contains
+                                'pitch' (float) and 'T' (float) keys representing
+                                pitch angle and thrust values respectively.
+    Returns:
+        None: Displays a plot of thrust vs pitch angle.
+    """
     pitch = [res['pitch'] for res in results]
     T = [res['T'] for res in results]
 
@@ -318,6 +443,15 @@ def plot_thrust_vs_pitch(results):
     plt.show()
 
 def plot_moment_vs_pitch(results):
+    """
+    Plots the relationship between pitch angle and moment.
+    Parameters:
+    results (list of dict): A list of dictionaries where each dictionary contains
+                            'pitch' (float) for pitch angle in degrees and 
+                            'M' (float) for moment in Nm.
+    Returns:
+    None: Displays the plot.
+    """
     pitch = [res['pitch'] for res in results]
     M = [res['M'] for res in results]
 
@@ -331,6 +465,15 @@ def plot_moment_vs_pitch(results):
     plt.show()
 
 def plot_power_vs_pitch(results):
+    """
+    Plots the relationship between pitch angle and power.
+    Parameters:
+        results (list of dict): A list of dictionaries where each dictionary contains
+                                'pitch' (float) and 'P' (float) keys representing 
+                                pitch angle and power, respectively.
+    Returns:
+        None: Displays a plot of power vs. pitch angle.
+    """
     pitch = [res['pitch'] for res in results]
     P = [res['P'] for res in results]
 
@@ -344,6 +487,14 @@ def plot_power_vs_pitch(results):
     plt.show()
 
 def plot_thrust_vs_omega(results):
+    """
+    Plots the thrust (T) versus rotational speed (omega) for a wind turbine.
+    Parameters:
+        results (list of dict): A list of dictionaries where each dictionary contains
+                                'omega' (rotational speed in rad/s) and 'T' (thrust in N).
+    Returns:
+        None: Displays the plot.
+    """
     omega = [res['omega'] for res in results]
     T = [res['T'] for res in results]
 
@@ -357,6 +508,14 @@ def plot_thrust_vs_omega(results):
     plt.show()
 
 def plot_moment_vs_omega(results):
+    """
+    Plots the relationship between rotational speed (omega) and moment (M).
+    Parameters:
+        results (list of dict): A list of dictionaries where each dictionary contains
+                                'omega' (rotational speed in rad/s) and 'M' (moment in Nm).
+    Returns:
+        None: Displays a plot of moment vs rotational speed.
+    """
     omega = [res['omega'] for res in results]
     M = [res['M'] for res in results]
 
@@ -370,6 +529,15 @@ def plot_moment_vs_omega(results):
     plt.show()
 
 def plot_power_vs_omega(results):
+    """
+    Plots the relationship between rotational speed (omega) and power (P).
+    Parameters:
+        results (list of dict): A list of dictionaries where each dictionary 
+                                contains 'omega' (rotational speed in rad/s) 
+                                and 'P' (power in watts).
+    Returns:
+        None: Displays the plot.
+    """
     omega = [res['omega'] for res in results]
     P = [res['P'] for res in results]
 
@@ -383,8 +551,17 @@ def plot_power_vs_omega(results):
     plt.show()
 
 def plot_tip_loss_vs_span(elemental_data):
-    """Plot Prandtl Tip Loss Factor F vs span (r), grouped by V₀."""
-
+    """
+    Plots the Prandtl Tip Loss Factor (F) against the spanwise position (r), 
+    grouped by the freestream velocity (V₀).
+    Parameters:
+        elemental_data (dict): A dictionary containing:
+            - 'r' (array-like): Spanwise positions [m].
+            - 'V0' (array-like): Freestream velocities [m/s].
+            - 'F' (array-like): Tip loss factors [-].
+    Returns:
+        None: Displays the plot.
+    """
     r = np.array(elemental_data['r'])
     V0 = np.array(elemental_data['V0'])
     F = np.array(elemental_data['F'])
@@ -416,8 +593,18 @@ def plot_tip_loss_vs_span(elemental_data):
 def plot_cp_ct_surfaces(results):
     """
     Plot CP and CT surfaces as a function of blade pitch (theta_p) and tip speed ratio (lambda).
+    Parameters:
+        results (list of dict): A list of dictionaries containing simulation data. 
+                                Each dictionary must include the keys:
+                                'pitch' (float): Blade pitch angle in degrees,
+                                'omega' (float): Rotor angular velocity in rad/s,
+                                'V_0' (float): Wind speed in m/s,
+                                'C_P' (float): Power coefficient,
+                                'C_T' (float): Thrust coefficient.
+    Returns:
+        None: Displays the 3D surface plots for Cp and Ct.
     """
-
+    
     # Step 1: Extract data
     pitch = np.array([res['pitch'] for res in results])   # degrees
     omega = np.array([res['omega'] for res in results])   # rad/s
