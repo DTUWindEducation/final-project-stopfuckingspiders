@@ -9,6 +9,7 @@ src/WindTurbineModeling/results/*
 WindTurbineModeling/results/*
 results/*
 examples/results/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
