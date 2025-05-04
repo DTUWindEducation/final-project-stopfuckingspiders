@@ -25,32 +25,13 @@ git clone https://github.com/DTUWindEducation/final-project-stopfuckingspiders.g
 cd final-project-stopfuckingspiders
 ```
 
-### 2. Create and Activate a Virtual Environment (Optional but Recommended)
-
-#### Using `venv` (Python 3.x):
+### 2. Pip install
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate     # On Linux/macOS
-venv\Scripts\activate        # On Windows
+ pip install -e
 ```
 
-### 3. Install Requirements
-
-```bash
-pip install -r requirements.txt
-```
-
-#### 💡 Using Conda?
-
-If you are using [Conda](https://docs.conda.io/), you can install dependencies from an `environment.yml` file:
-
-```bash
-conda env create -f environment.yml
-conda activate WindTurbines
-```
-
-### 4. Run the Project (Example)
+### 3. Run the Project (Example)
 
 ```bash
 python examples/main.py
