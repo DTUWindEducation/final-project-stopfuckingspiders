@@ -36,6 +36,10 @@ python examples/main.py
 ```
 
 ## Architecture
+
+This package follows a modular design to cleanly separate data handling, computation, and visualization:
+
+
 ![Architecture](examples/architecture.png)
 
 
