@@ -40,17 +40,47 @@ python examples/main.py
 ## Package Architecture
 
 This package follows a modular design to cleanly separate data handling, computation, and visualization:
-
 ```
-src/WindTurbineModeling/
-├── __init__.py            # Exposes top-level classes and modules
-├── bem_solvers.py         # Core BEM solver logic (standard and optimal)
-├── config.py              # Loads and manages global configuration settings
-├── equations.py           # Core aerodynamic computations and helper functions
-├── interactive.py         # Interactive CLI interface for running solvers and visualizing results
-├── load.py                # Functions to load geometry, settings, and airfoil data
-├── plot.py                # Visualization functions for performance and geometry
-├── read.py                # File reading utilities for geometry and data discovery
+[Stop Fucking Spiders]
+├── inputs/
+│   └── rotor_diagram.jpeg
+│   └── IEA-15-240-RWT
+│        ├── IEA-15-240-RWT_AeroDyn15_blade.dat
+│        ├──IEA_15MW_RWT_Onshore.opt
+│        └── Airfoils
+│             └── IEA-15-240-RWT_AF00_Coords.txt
+│             ├──  .
+│             ├──  .
+│             ├── IEA-15-240-RWT_AF49_Coords.txt 
+│             ├── IEA-15-240-RWT_AeroDyn15_Polar_00.dat
+│             ├──  .
+│             ├──  .
+│             └── IEA-15-240-RWT_AeroDyn15_Polar_49.dat
+├── src/WindTurbineModeling/
+│   ├── __init__.py            # Exposes top-level classes and modules
+│   ├── bem_solvers.py         # Core BEM solver logic (standard and optimal)
+│   ├── config.py              # Loads and manages global configuration settings
+│   ├── equations.py           # Core aerodynamic computations and helper functions
+│   ├── interactive.py         # Interactive CLI interface for running solvers and visualizing results
+│   ├── load.py                # Functions to load geometry, settings, and airfoil data
+│   ├── plot.py                # Visualization functions for performance and geometry
+│   └── read.py                # File reading utilities for geometry and data discovery
+├── tests/
+│   └── tests_scripts_for_the_project
+├── examples/
+│   ├── main.py 
+│   ├── BEM_workflow.png
+│   ├── architecture.png
+│   └── BEM_workflow.drawio
+├── docs/
+│   └── aerodyn_v15_user_guide_and_theory_manual
+├── .gitignore
+├── LICENSE
+├── classes.dot
+├── config.yaml
+├── pylint_report.txt
+├── pyproject.toml
+└── pytest.ini
 ```
 
 ![Architecture Overview](examples/architecture.png)
