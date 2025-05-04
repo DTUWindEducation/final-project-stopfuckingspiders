@@ -36,7 +36,7 @@ python examples/main.py
 ```
 
 ## Architecture
+![Architecture](examples/architecture.png)
 
-[ADD TEXT HERE!]
 
 
