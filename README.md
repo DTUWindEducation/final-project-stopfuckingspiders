@@ -60,9 +60,9 @@ python examples/main.py
 
 ## Architecture
 
-[ADD TEXT HERE!]
+This package follows a modular design to cleanly separate data handling, computation, and visualization:
 
-
+![Architecture Overview](examples/architecture.png)
 
 ### Configuration
 
@@ -105,8 +105,6 @@ This folder `examples/` contains usage examples for running the Wind Turbine Mod
 - Power and thrust curve generation
 - Interactive re-execution and figure saving
 
-
-
 ### Documentation
 
 The folder `docs` contains the official manual from the U.S. Department of Energy’s National Renewable Energy Laboratory (**`aerodyn_v15_user_guide_and_theory_manual.pdf`**). The document contains detailed descriptions of abbreviation of variables used in the model. Further this guide includes:
@@ -115,7 +113,6 @@ The folder `docs` contains the official manual from the U.S. Department of Energ
   - Blade Element Momentum (BEM) theory implementation
   - Unsteady airfoil aerodynamics (Beddoes-Leishman models)
   - Configuration options for standalone and FAST-coupled simulations
-
 
 ## 🔭 Future Work
 - Peer review to validate results and ensure correctness.
