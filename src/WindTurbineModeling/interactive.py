@@ -8,40 +8,51 @@ from WindTurbineModeling.plot import *
 
 class ResultPlotter:
     """
-    ResultPlotter is a class designed to interactively run solvers for wind turbine modeling
-    and visualize the results through various plots. It provides options for running a 
-    Standard BEM Solver or an Optimal Control BEM Solver, and includes menus for generating 
-    specific plots, saving figures, and restarting the solver.
+    ResultPlotter is a class designed to interactively run solvers for wind
+    turbine modeling and visualize the results through various plots.
+    It provides options for running a Standard BEM Solver or an Optimal Control
+    BEM Solver, and includes menus for generating specific plots,
+    saving figures, and restarting the solver.
     Methods:
     ---------
     __init__():
-        Initializes the ResultPlotter instance with default solver and solver type.
+        Initializes the ResultPlotter instance with default solver
+        and solver type.
     run_solver():
-        Prompts the user to choose and run either the Standard or Optimal Control BEM Solver.
-        Displays progress and execution time, and navigates to the appropriate menu based on 
+        Prompts the user to choose and run either the Standard or
+        Optimal Control BEM Solver.
+        Displays progress and execution time, and navigates to the appropriate
+        menu based on
         the solver type.
     optimal_control_menu():
-        Provides a menu for interacting with results after running the Optimal Control Solver.
-        Allows visualization of results, saving figures, restarting the solver, or exiting.
+        Provides a menu for interacting with results after running the Optimal
+        Control Solver.
+        Allows visualization of results, saving figures, restarting the solver,
+        or exiting.
     plot_menu():
-        Provides an interactive menu for generating various plots after running the Standard 
-        BEM Solver. Includes options for restarting the solver, saving figures, generating 
+        Provides an interactive menu for generating various plots after running
+        the Standard
+        BEM Solver. Includes options for restarting the solver, saving figures,
+        generating
         all plots, or exiting.
     _generate_plot(choice):
         Generates a specific plot based on the user's choice from the plot menu.
     _generate_all_plots():
-        Generates all available plots sequentially, including geometry, BEM-related plots, 
+        Generates all available plots sequentially, including geometry,
+        BEM-related plots,
         and performance curves.
     _save_figure():
-        Saves the current matplotlib figure to a specified file in the "results" directory.
+        Saves the current matplotlib figure to a specified file in the
+        "results" directory.
     plot_optimal_strategy():
-        Generates and displays a 2x2 grid of subplots showing the optimal control strategy 
-        results, including pitch vs wind speed, RPM vs wind speed, power vs wind speed, and 
-        thrust vs wind speed.
+        Generates and displays a 2x2 grid of subplots showing the optimal
+        control strategy results, including pitch vs wind speed,
+        RPM vs wind speed, power vs wind speed, and thrust vs wind speed.
     """
     def __init__(self):
         """
-        Initializes the instance with default solver and solver type set to None.
+        Initializes the instance with default solver and
+        solver type set to None.
         """
         self.solver = None
         self.solver_type = None
@@ -49,9 +60,10 @@ class ResultPlotter:
     def run_solver(self):
         """
         Runs the selected solver (Standard or Optimal) based on user input.
-        Prompts the user to choose between the Standard BEM Solver or the 
-        Optimal Control BEM Solver, executes the chosen solver, and displays 
-        the execution time. Provides additional options based on the solver type.
+        Prompts the user to choose between the Standard BEM Solver or the
+        Optimal Control BEM Solver, executes the chosen solver, and displays
+        the execution time. Provides additional options based
+        on the solver type.
         """
         print("\n Choose Solver to Run:")
         print("1. Standard BEM Solver (Functional requirements 1-5)")
@@ -72,7 +84,8 @@ class ResultPlotter:
         start_time = time.time()
         self.solver.run()  # will print step-by-step progress internally
         end_time = time.time()
-        print(f"✅ {self.solver_type} Solver completed in {end_time - start_time:.2f} seconds.\n")
+        print(f"✅ {self.solver_type} \
+              Solver completed in {end_time - start_time:.2f} seconds.\n")
 
         if self.solver_type == "Standard":
             self.plot_menu()
@@ -82,7 +95,8 @@ class ResultPlotter:
 
     def optimal_control_menu(self):
         """
-        Provides a menu for interacting with results after running the Optimal Control Solver.
+        Provides a menu for interacting with results after running the
+        Optimal Control Solver.
 
         Inputs:
         -------
@@ -97,7 +111,8 @@ class ResultPlotter:
         """
         print("\n✅ Solver complete!")
 
-        choice = input("📊 Do you want to visualize results? (y/n): ").lower().strip()
+        choice = input("📊 Do you want to visualize results? (y/n): "
+                       ).lower().strip()
 
         if choice == 'y':
             self.plot_optimal_strategy()
@@ -113,7 +128,7 @@ class ResultPlotter:
             if option == 's':
                 self._save_figure()
             elif option == 'r':
-                self.run_solver()  
+                self.run_solver()
                 break
             elif option == 'q':
                 print("👋 Exiting. Bye!")
@@ -124,24 +139,27 @@ class ResultPlotter:
 
     def plot_menu(self):
         """
-        Displays an interactive plotting menu for visualizing wind turbine simulation results.
-        This method provides a menu-driven interface for users to select various plotting options 
-        after the solver has completed its computations. Users can generate specific plots, save 
-        figures, visualize all plots, or restart the solver.
+        Displays an interactive plotting menu for visualizing wind turbine
+        simulation results. This method provides a menu-driven interface for
+        users to select various plotting options after the solver has completed
+        its computations. Users can generate specific plots, save figures,
+        visualize all plots, or restart the solver.
         Input:
             - User input via the console to select menu options:
                 * 'q': Quit the menu.
                 * '0': Restart the solver.
                 * 's': Save the current figure.
                 * 'a': Generate and display all plots.
-                * Integer (0-19): Generate a specific plot based on the selected option.
+                * Integer (0-19): Generate a specific plot based on the
+                selected option.
         Output:
             - Executes the corresponding action based on user input:
                 * Generates and displays plots.
                 * Saves the current figure to a file.
                 * Restarts the solver.
                 * Exits the menu.
-            - Prints messages to guide the user and indicate the status of actions.
+            - Prints messages to guide the user and indicate the status
+            of actions.
         """
         while True:
             print("\n📈 Solver complete! What do you want to do?")
@@ -165,7 +183,8 @@ class ResultPlotter:
             print("16. Thrust vs Wind Speed (V0)")
             print("17. Power vs Wind Speed (V0)")
             print("18. Prandtl Tip Loss Factor vs Radius r")
-            print("19. Power and Thrust Coefficient Surfaces (Cp, Ct) vs Pitch and λ") 
+            print("19. Power and Thrust Coefficient Surfaces (Cp, Ct) vs " \
+            "Pitch and λ")
             print("\na. 📊 Visualize ALL plots")
             print("\ns. 💾 Save current figure")
             print("q. ❌ Quit")
@@ -187,7 +206,8 @@ class ResultPlotter:
                     choice = int(choice)
                     self._generate_plot(choice)
                 except ValueError:
-                    print("⚠️ Invalid input. Enter a number, 's' to save, 'a' for all plots, or 'q' to quit.")
+                    print("⚠️ Invalid input. Enter a number, 's' to save,"
+                    " 'a' for all plots, or 'q' to quit.")
 
 
     def _generate_plot(self, choice):
@@ -195,11 +215,13 @@ class ResultPlotter:
         Generate and display a specific plot based on the user's choice.
 
         Parameters:
-            choice (int): An integer representing the user's selection for the 
-                          type of plot to generate. Valid choices range from 1 to 19.
+            choice (int): An integer representing the user's selection for the
+                          type of plot to generate. Valid choices range
+                          from 1 to 19.
 
         Outputs:
-            Displays the selected plot. If the choice is invalid, a warning message 
+            Displays the selected plot. If the choice is invalid, a warning
+            message
             is printed instead.
         """
         if choice == 1:
@@ -235,11 +257,12 @@ class ResultPlotter:
         elif choice == 16:
             wind_speeds = [res['V_0'] for res in self.solver.results]
             thrusts = [res['T'] for res in self.solver.results]
-            plot_thrust_curve(wind_speeds, thrusts) 
+            plot_thrust_curve(wind_speeds, thrusts)
         elif choice == 17:
             wind_speeds = [res['V_0'] for res in self.solver.results]
             powers = [res['P'] for res in self.solver.results]
-            plot_power_curve(wind_speeds, [p/1e6 for p in powers], rated_power=RATED_POWER)
+            plot_power_curve(wind_speeds, [p/1e6 for p in powers],
+                             rated_power=RATED_POWER)
         elif choice == 18:
             plot_tip_loss_vs_span(self.solver.elemental_data)
         elif choice == 19:
@@ -250,12 +273,14 @@ class ResultPlotter:
     def _generate_all_plots(self):
         """
         Generate and display all available plots for wind turbine analysis.
-        This method sequentially generates various plots related to the geometry, 
-        Blade Element Momentum (BEM) analysis, and performance curves of the wind turbine.
+        This method sequentially generates various plots related to the
+        geometry,        Blade Element Momentum (BEM) analysis, and performance
+        curves of the wind turbine.
         Inputs:
         - self: The instance of the class containing solver data and inputs.
         Outputs:
-        - None: The method generates and displays plots but does not return any value.
+        - None: The method generates and displays plots but does not return
+        any value.
         Plots Generated:
         - Geometry-related plots:
             * Airfoil shapes
@@ -278,8 +303,10 @@ class ResultPlotter:
             * Thrust curve (Thrust vs wind speed)
             * Power curve (Power vs wind speed, normalized to MW)
         Note:
-        - The method assumes that the solver contains precomputed results and inputs.
-        - The rated power for the power curve is specified by the constant `RATED_POWER`.
+        - The method assumes that the solver contains precomputed results
+        and inputs.
+        - The rated power for the power curve is specified by the constant
+        `RATED_POWER`.
         """
 
         print("\n📊 Generating all plots...")
@@ -309,7 +336,8 @@ class ResultPlotter:
         powers = [res['P'] for res in self.solver.results]
 
         plot_thrust_curve(wind_speeds, thrusts)
-        plot_power_curve(wind_speeds, [p/1e6 for p in powers], rated_power=RATED_POWER)
+        plot_power_curve(wind_speeds, [p/1e6 for p in powers],
+                         rated_power=RATED_POWER)
 
         print("✅ Finished displaying all plots!")
 
@@ -318,17 +346,17 @@ class ResultPlotter:
         """
         Save the current matplotlib figure to a file.
 
-        This method prompts the user to enter a filename for saving the current 
-        matplotlib figure. If no filename is provided, a default name 
-        ("bem_plot.png") is used. The figure is saved in the "results" directory, 
-        which is created if it does not already exist.
+        This method prompts the user to enter a filename for saving the current
+        matplotlib figure. If no filename is provided, a default name
+        ("bem_plot.png") is used. The figure is saved in the "results"
+        directory, which is created if it does not already exist.
 
         Input:
-            - User input for the filename (e.g., "plot.png"). If left blank, 
+            - User input for the filename (e.g., "plot.png"). If left blank,
               defaults to "bem_plot.png".
 
         Output:
-            - Saves the figure as a file in the "results" directory with the 
+            - Saves the figure as a file in the "results" directory with the
               specified or default filename.
             - Prints a confirmation message with the save path.
         """
@@ -343,13 +371,15 @@ class ResultPlotter:
     def plot_optimal_strategy(self):
         """
         Plot the optimal control strategy results for a wind turbine model.
-        This method generates a 2x2 grid of subplots to visualize the relationships 
-        between wind speed and key turbine parameters: pitch angle, rotational speed (RPM), 
-        power output, and thrust force. Each subplot includes appropriate labels, titles, 
+        This method generates a 2x2 grid of subplots to visualize the
+        relationships between wind speed and key turbine parameters:
+        pitch angle, rotational speed (RPM), power output, and thrust force.
+        Each subplot includes appropriate labels, titles,
         and grid lines for clarity.
         Inputs:
-        - None: This method uses the `self.solver.results` attribute, which is expected 
-          to be a list of dictionaries containing the following keys:
+        - None: This method uses the `self.solver.results` attribute,
+        which is expected to be a list of dictionaries containing the
+        following keys:
           - 'V_0': Wind speed (m/s)
           - 'Pitch': Pitch angle (degrees)
           - 'RPM': Rotational speed (RPM)
@@ -407,5 +437,6 @@ def main():
     plotter.plot_menu()
 
 if __name__ == "__main__":
-    # Call the main function to start the interactive wind turbine modeling application.
+    # Call the main function to start the interactive wind turbine
+    # modeling application.
     main()

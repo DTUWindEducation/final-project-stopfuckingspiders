@@ -1,20 +1,24 @@
 """
 WindTurbineModeling Package
 
-This package provides a Blade Element Momentum (BEM) solver framework for analyzing wind turbine performance,
-including standard and optimal control strategies, data loading, visualization, and aerodynamic calculations.
+This package provides a Blade Element Momentum (BEM) solver framework for
+analyzing wind turbine performance,
+including standard and optimal control strategies, data loading,
+visualization, and aerodynamic calculations.
 
 Available Submodules:
 ---------------------
 - bem_solvers: BEMSolver and BEMSolverOpt classes
-- load: Utilities for loading blade geometry, operational data, and airfoil data
+- load: Utilities for loading blade geometry, operational data, and airfoil
+data
 - equations: Core aerodynamic computation functions
 - plot: Visualization utilities for performance metrics and turbine geometry
 - interactive: CLI driver for simulation and plotting
 
 Exposed API:
 ------------
-This __init__.py exposes key classes and functions at the top level to simplify imports.
+This __init__.py exposes key classes and functions at the top level to
+simplify imports.
 """
 
 # Version
