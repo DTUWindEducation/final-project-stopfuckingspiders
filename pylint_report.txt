@@ -1,0 +1,401 @@
+
+(base) e:\46120_Scientific_Programming\final-project-stopfuckingspiders>pylint src/  
+************* Module WindTurbineModeling.bem_solvers
+src\WindTurbineModeling\bem_solvers.py:84:0: C0301: Line too long (105/100) (line-too-long)
+src\WindTurbineModeling\bem_solvers.py:85:0: C0301: Line too long (107/100) (line-too-long)
+src\WindTurbineModeling\bem_solvers.py:86:0: C0301: Line too long (131/100) (line-too-long)
+src\WindTurbineModeling\bem_solvers.py:91:0: C0301: Line too long (121/100) (line-too-long)
+src\WindTurbineModeling\bem_solvers.py:124:0: C0301: Line too long (131/100) (line-too-long)
+src\WindTurbineModeling\bem_solvers.py:194:0: C0301: Line too long (105/100) (line-too-long)
+src\WindTurbineModeling\bem_solvers.py:222:0: C0301: Line too long (104/100) (line-too-long)
+src\WindTurbineModeling\bem_solvers.py:268:0: C0301: Line too long (117/100) (line-too-long)
+src\WindTurbineModeling\bem_solvers.py:358:0: C0301: Line too long (101/100) (line-too-long)
+src\WindTurbineModeling\bem_solvers.py:380:0: C0301: Line too long (122/100) (line-too-long)
+src\WindTurbineModeling\bem_solvers.py:382:0: C0301: Line too long (144/100) (line-too-long)
+src\WindTurbineModeling\bem_solvers.py:391:0: C0301: Line too long (121/100) (line-too-long)
+src\WindTurbineModeling\bem_solvers.py:501:0: C0301: Line too long (105/100) (line-too-long)
+src\WindTurbineModeling\bem_solvers.py:511:0: C0301: Line too long (111/100) (line-too-long)
+src\WindTurbineModeling\bem_solvers.py:532:0: C0301: Line too long (101/100) (line-too-long)
+src\WindTurbineModeling\bem_solvers.py:568:0: C0301: Line too long (107/100) (line-too-long)
+src\WindTurbineModeling\bem_solvers.py:574:0: C0301: Line too long (122/100) (line-too-long)
+src\WindTurbineModeling\bem_solvers.py:1:1: W0511: TODO: Add docstrings to all functions and classes (fixme)
+src\WindTurbineModeling\bem_solvers.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+Exception on node <Import l.10 at 0x16aab0c38f0> in file 'e:\46120_Scientific_Programming\final-project-stopfuckingspiders\src\WindTurbineModeling\bem_solvers.py'
+Traceback (most recent call last):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\pylint\checkers\imports.py", line 846, in _get_imported_module
+    return importnode.do_import_module(modname)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\_base_nodes.py", line 146, in do_import_module
+    return mymodule.import_module(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\scoped_nodes\scoped_nodes.py", line 527, in import_module
+    return AstroidManager().ast_from_module_name(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\manager.py", line 232, in ast_from_module_name
+    return self.ast_from_file(found_spec.location, modname, fallback=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\manager.py", line 124, in ast_from_file
+    return AstroidBuilder(self).file_build(filepath, modname)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\builder.py", line 145, in file_build
+    return self._post_build(module, builder, encoding)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\builder.py", line 169, in _post_build
+    self.delayed_assattr(delayed)
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\builder.py", line 240, in delayed_assattr
+    for inferred in node.expr.infer():
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\node_ng.py", line 171, in infer
+    yield from self._infer(context=context, **kwargs)
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 142, in raise_if_nothing_inferred
+    yield next(generator)
+          ^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 111, in wrapped
+    for res in _func(node, context, **kwargs):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\bases.py", line 176, in _infer_stmts
+    for inf in stmt.infer(context=context):  # type: ignore[union-attr]
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\node_ng.py", line 184, in infer
+    for i, result in enumerate(self._infer(context=context, **kwargs)):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 142, in raise_if_nothing_inferred
+    yield next(generator)
+          ^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 111, in wrapped
+    for res in _func(node, context, **kwargs):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\bases.py", line 176, in _infer_stmts
+    for inf in stmt.infer(context=context):  # type: ignore[union-attr]
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\node_ng.py", line 184, in infer
+    for i, result in enumerate(self._infer(context=context, **kwargs)):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 142, in raise_if_nothing_inferred
+    yield next(generator)
+          ^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 111, in wrapped
+    for res in _func(node, context, **kwargs):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\inference.py", line 358, in infer_attribute
+    for owner in self.expr.infer(context):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\node_ng.py", line 184, in infer
+    for i, result in enumerate(self._infer(context=context, **kwargs)):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 142, in raise_if_nothing_inferred
+    yield next(generator)
+          ^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 111, in wrapped
+    for res in _func(node, context, **kwargs):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\inference.py", line 358, in infer_attribute
+    for owner in self.expr.infer(context):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\node_ng.py", line 184, in infer
+    for i, result in enumerate(self._infer(context=context, **kwargs)):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 142, in raise_if_nothing_inferred
+    yield next(generator)
+          ^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 111, in wrapped
+    for res in _func(node, context, **kwargs):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\bases.py", line 176, in _infer_stmts
+    for inf in stmt.infer(context=context):  # type: ignore[union-attr]
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\node_ng.py", line 184, in infer
+    for i, result in enumerate(self._infer(context=context, **kwargs)):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 142, in raise_if_nothing_inferred
+    yield next(generator)
+          ^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 111, in wrapped
+    for res in _func(node, context, **kwargs):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\bases.py", line 176, in _infer_stmts
+    for inf in stmt.infer(context=context):  # type: ignore[union-attr]
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\node_ng.py", line 184, in infer
+    for i, result in enumerate(self._infer(context=context, **kwargs)):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 142, in raise_if_nothing_inferred
+    yield next(generator)
+          ^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 111, in wrapped
+    for res in _func(node, context, **kwargs):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\inference.py", line 279, in infer_call
+    yield from callee.infer_call_result(caller=self, context=callcontext)
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\scoped_nodes\scoped_nodes.py", line 1733, in infer_call_result
+    yield from returnnode.value.infer(context)
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\node_ng.py", line 184, in infer
+    for i, result in enumerate(self._infer(context=context, **kwargs)):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 142, in raise_if_nothing_inferred
+    yield next(generator)
+          ^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 111, in wrapped
+    for res in _func(node, context, **kwargs):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\inference.py", line 270, in infer_call
+    for callee in self.func.infer(context):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\node_ng.py", line 184, in infer
+    for i, result in enumerate(self._infer(context=context, **kwargs)):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 142, in raise_if_nothing_inferred
+    yield next(generator)
+          ^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 111, in wrapped
+    for res in _func(node, context, **kwargs):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\inference.py", line 358, in infer_attribute
+    for owner in self.expr.infer(context):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\node_ng.py", line 184, in infer
+    for i, result in enumerate(self._infer(context=context, **kwargs)):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 142, in raise_if_nothing_inferred
+    yield next(generator)
+          ^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 111, in wrapped
+    for res in _func(node, context, **kwargs):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\inference.py", line 279, in infer_call
+    yield from callee.infer_call_result(caller=self, context=callcontext)
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\scoped_nodes\scoped_nodes.py", line 1733, in infer_call_result
+    yield from returnnode.value.infer(context)
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\node_ng.py", line 184, in infer
+    for i, result in enumerate(self._infer(context=context, **kwargs)):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 142, in raise_if_nothing_inferred
+    yield next(generator)
+          ^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 111, in wrapped
+    for res in _func(node, context, **kwargs):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\inference.py", line 270, in infer_call
+    for callee in self.func.infer(context):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\node_ng.py", line 184, in infer
+    for i, result in enumerate(self._infer(context=context, **kwargs)):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 142, in raise_if_nothing_inferred
+    yield next(generator)
+          ^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 111, in wrapped
+    for res in _func(node, context, **kwargs):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\bases.py", line 176, in _infer_stmts
+    for inf in stmt.infer(context=context):  # type: ignore[union-attr]
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\node_ng.py", line 184, in infer
+    for i, result in enumerate(self._infer(context=context, **kwargs)):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 142, in raise_if_nothing_inferred
+    yield next(generator)
+          ^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\decorators.py", line 111, in wrapped
+    for res in _func(node, context, **kwargs):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\inference.py", line 334, in infer_import_from
+    module = self.do_import_module()
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\_base_nodes.py", line 146, in do_import_module
+    return mymodule.import_module(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\nodes\scoped_nodes\scoped_nodes.py", line 527, in import_module
+    return AstroidManager().ast_from_module_name(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\manager.py", line 232, in ast_from_module_name
+    return self.ast_from_file(found_spec.location, modname, fallback=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\manager.py", line 124, in ast_from_file
+    return AstroidBuilder(self).file_build(filepath, modname)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\builder.py", line 144, in file_build
+    module, builder = self._data_build(data, modname, path)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\builder.py", line 204, in _data_build
+    module = builder.visit_module(node, modname, node_file, package)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\rebuilder.py", line 254, in visit_module
+    [self.visit(child, newnode) for child in node.body],
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\astroid\rebuilder.py", line 603, in visit
+    visit_method = getattr(self, visit_name)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'TreeRebuilder' object has no attribute 'visit_typealias'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\ProgramData\anaconda3\Lib\site-packages\pylint\utils\ast_walker.py", line 91, in walk
+    callback(astroid)
+  File "C:\ProgramData\anaconda3\Lib\site-packages\pylint\checkers\imports.py", line 526, in visit_import
+    imported_module = self._get_imported_module(node, name)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ProgramData\anaconda3\Lib\site-packages\pylint\checkers\imports.py", line 871, in _get_imported_module
+    raise astroid.AstroidError from e
+astroid.exceptions.AstroidError
+src\WindTurbineModeling\bem_solvers.py:1:0: F0002: src\WindTurbineModeling\bem_solvers.py: Fatal error while checking 'src\WindTurbineModeling\bem_solvers.py'. Please open an issue in our bug tracker so we address this. There is a pre-filled template that you can use in 'C:\Users\Dorian\AppData\Local\pylint\pylint\Cache\pylint-crash-2025-05-04-12-28-18.txt'. (astroid-error)
+************* Module WindTurbineModeling.config
+src\WindTurbineModeling\config.py:10:0: C0301: Line too long (116/100) (line-too-long)
+src\WindTurbineModeling\config.py:21:0: C0301: Line too long (118/100) (line-too-long)
+src\WindTurbineModeling\config.py:22:0: C0301: Line too long (144/100) (line-too-long)
+src\WindTurbineModeling\config.py:23:0: C0301: Line too long (144/100) (line-too-long)
+src\WindTurbineModeling\config.py:24:0: C0301: Line too long (108/100) (line-too-long)
+src\WindTurbineModeling\config.py:30:0: C0301: Line too long (101/100) (line-too-long)
+src\WindTurbineModeling\config.py:41:0: C0301: Line too long (115/100) (line-too-long)
+src\WindTurbineModeling\config.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src\WindTurbineModeling\config.py:15:5: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+src\WindTurbineModeling\bem_solvers.py:9:0: C0411: standard import "from collections import defaultdict" should be placed before "import numpy as np" (wrong-import-order)
+src\WindTurbineModeling\config.py:1:0: C0411: standard import "import os" should be placed before "import numpy as np" (wrong-import-order)
+src\WindTurbineModeling\config.py:2:0: C0411: standard import "from pathlib import Path" should be placed before "import numpy as np" (wrong-import-order)
+src\WindTurbineModeling\config.py:1:0: C0412: Imports from package os are not grouped (ungrouped-imports)
+src\WindTurbineModeling\config.py:2:0: C0412: Imports from package pathlib are not grouped (ungrouped-imports)
+src\WindTurbineModeling\config.py:1:0: W0611: Unused import os (unused-import)
+************* Module WindTurbineModeling.equations
+src\WindTurbineModeling\equations.py:58:0: C0301: Line too long (125/100) (line-too-long)
+src\WindTurbineModeling\equations.py:60:0: C0301: Line too long (105/100) (line-too-long)
+src\WindTurbineModeling\equations.py:173:0: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\equations.py:179:0: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\equations.py:191:0: C0301: Line too long (168/100) (line-too-long)
+src\WindTurbineModeling\equations.py:194:0: C0301: Line too long (101/100) (line-too-long)
+src\WindTurbineModeling\equations.py:195:0: C0301: Line too long (107/100) (line-too-long)
+src\WindTurbineModeling\equations.py:205:0: C0301: Line too long (101/100) (line-too-long)
+src\WindTurbineModeling\equations.py:230:0: C0301: Line too long (178/100) (line-too-long)
+src\WindTurbineModeling\equations.py:260:0: C0301: Line too long (118/100) (line-too-long)
+src\WindTurbineModeling\equations.py:285:0: C0301: Line too long (108/100) (line-too-long)
+src\WindTurbineModeling\equations.py:308:0: C0301: Line too long (200/100) (line-too-long)
+src\WindTurbineModeling\equations.py:347:0: C0301: Line too long (153/100) (line-too-long)
+src\WindTurbineModeling\equations.py:354:0: C0301: Line too long (104/100) (line-too-long)
+src\WindTurbineModeling\equations.py:359:0: C0301: Line too long (112/100) (line-too-long)
+src\WindTurbineModeling\equations.py:360:0: C0301: Line too long (108/100) (line-too-long)
+src\WindTurbineModeling\equations.py:367:0: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\equations.py:372:0: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\equations.py:375:0: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\equations.py:383:0: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\equations.py:390:0: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\equations.py:391:0: C0304: Final newline missing (missing-final-newline)
+src\WindTurbineModeling\equations.py:7:1: W0511: TODO: add docstrings to all functions (fixme)
+src\WindTurbineModeling\equations.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src\WindTurbineModeling\equations.py:1:0: F0002: src\WindTurbineModeling\equations.py: Fatal error while checking 'src\WindTurbineModeling\equations.py'. Please open an issue in our bug tracker so we address this. There is a pre-filled template that you can use in 'C:\Users\Dorian\AppData\Local\pylint\pylint\Cache\pylint-crash-2025-05-04-12-28-20.txt'. (astroid-error)
+************* Module WindTurbineModeling.interactive
+src\WindTurbineModeling\interactive.py:65:33: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\interactive.py:98:86: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\interactive.py:120:0: C0301: Line too long (110/100) (line-too-long)
+src\WindTurbineModeling\interactive.py:158:51: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\interactive.py:1:1: W0511: TODO: Add docstrings to all functions and classes, commenting (fixme)
+src\WindTurbineModeling\interactive.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src\WindTurbineModeling\interactive.py:9:0: W0401: Wildcard import WindTurbineModeling.plot (wildcard-import)
+src\WindTurbineModeling\interactive.py:11:0: C0115: Missing class docstring (missing-class-docstring)
+src\WindTurbineModeling\interactive.py:31:12: R1722: Consider using 'sys.exit' instead (consider-using-sys-exit)
+src\WindTurbineModeling\interactive.py:69:16: R1722: Consider using 'sys.exit' instead (consider-using-sys-exit)
+src\WindTurbineModeling\interactive.py:105:12: R1723: Unnecessary "elif" after "break", remove the leading "el" from "elif" (no-else-break)
+src\WindTurbineModeling\interactive.py:123:4: R0912: Too many branches (20/12) (too-many-branches)
+src\WindTurbineModeling\interactive.py:217:8: C0103: Variable name "V0" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\interactive.py:257:0: C0116: Missing function or method docstring (missing-function-docstring)
+src\WindTurbineModeling\interactive.py:3:0: C0411: standard import "import time" should be placed before "import numpy as np" (wrong-import-order)
+src\WindTurbineModeling\interactive.py:4:0: C0411: third party import "import pandas as pd" should be placed before "from WindTurbineModeling.load import load_operational_settings" (wrong-import-order)
+src\WindTurbineModeling\interactive.py:5:0: C0411: third party import "import matplotlib.pyplot as plt" should be placed before "from WindTurbineModeling.load import load_operational_settings" (wrong-import-order)
+src\WindTurbineModeling\interactive.py:6:0: C0411: standard import "from pathlib import Path" should be placed before "import numpy as np" (wrong-import-order)
+src\WindTurbineModeling\interactive.py:7:0: C0412: Imports from package WindTurbineModeling are not grouped (ungrouped-imports)
+src\WindTurbineModeling\interactive.py:4:0: W0611: Unused pandas imported as pd (unused-import)
+src\WindTurbineModeling\interactive.py:8:0: W0611: Unused NUMBER_BLADES imported from WindTurbineModeling.config (unused-import)
+src\WindTurbineModeling\interactive.py:8:0: W0611: Unused R imported from WindTurbineModeling.config (unused-import)
+src\WindTurbineModeling\interactive.py:9:0: W0614: Unused import(s) pd, np, os, re, plot_cp_curve, plot_ct_curve, StringIO, savgol_filter and Axes3D from wildcard import of WindTurbineModeling.plot (unused-wildcard-import)
+************* Module WindTurbineModeling.load
+src\WindTurbineModeling\load.py:81:30: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\load.py:86:0: C0301: Line too long (106/100) (line-too-long)
+src\WindTurbineModeling\load.py:187:0: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\load.py:190:0: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\load.py:196:0: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\load.py:197:0: C0304: Final newline missing (missing-final-newline)
+src\WindTurbineModeling\load.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src\WindTurbineModeling\load.py:1:0: F0002: src\WindTurbineModeling\load.py: Fatal error while checking 'src\WindTurbineModeling\load.py'. Please open an issue in our bug tracker so we address this. There is a pre-filled template that you can use in 'C:\Users\Dorian\AppData\Local\pylint\pylint\Cache\pylint-crash-2025-05-04-12-28-26.txt'. (astroid-error)
+************* Module WindTurbineModeling.plot
+src\WindTurbineModeling\plot.py:8:39: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\plot.py:46:0: C0301: Line too long (116/100) (line-too-long)
+src\WindTurbineModeling\plot.py:79:0: C0301: Line too long (108/100) (line-too-long)
+src\WindTurbineModeling\plot.py:177:0: C0301: Line too long (119/100) (line-too-long)
+src\WindTurbineModeling\plot.py:368:0: C0301: Line too long (102/100) (line-too-long)
+src\WindTurbineModeling\plot.py:370:0: C0301: Line too long (121/100) (line-too-long)
+src\WindTurbineModeling\plot.py:607:0: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\plot.py:11:1: W0511: TODO - Add docstrings to all functions (fixme)
+src\WindTurbineModeling\plot.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src\WindTurbineModeling\plot.py:27:11: C0103: Variable name "df" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:28:8: C0103: Variable name "x" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:28:11: C0103: Variable name "y" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:40:22: C0103: Argument name "R" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:40:28: C0103: Argument name "r" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:40:33: C0103: Argument name "dr" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:40:0: R0913: Too many arguments (6/5) (too-many-arguments)
+src\WindTurbineModeling\plot.py:40:0: R0914: Too many local variables (19/15) (too-many-locals)
+src\WindTurbineModeling\plot.py:53:9: C0103: Variable name "ax" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:69:8: C0103: Variable name "x" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:70:8: C0103: Variable name "y" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:53:4: W0612: Unused variable 'fig' (unused-variable)
+src\WindTurbineModeling\plot.py:187:4: C0103: Variable name "r" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:188:4: C0103: Variable name "V0" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:189:4: C0103: Variable name "a" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:192:4: C0103: Variable name "V0_unique" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:197:8: C0103: Variable name "v0" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:211:8: C0103: Variable name "v0" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:194:4: W0612: Unused variable 'fig' (unused-variable)
+src\WindTurbineModeling\plot.py:235:4: C0103: Variable name "V0_list" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:237:8: C0103: Variable name "V0" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:326:4: C0103: Variable name "r" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:327:4: C0103: Variable name "V0" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:328:4: C0103: Variable name "Cl" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:329:4: C0103: Variable name "Cd" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:331:4: C0103: Variable name "V0_unique" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:336:8: C0103: Variable name "v0" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:339:8: C0103: Variable name "Cl_v0" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:353:8: C0103: Variable name "Cd_v0" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:333:4: W0612: Unused variable 'fig' (unused-variable)
+src\WindTurbineModeling\plot.py:375:4: C0103: Variable name "Cl" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:376:4: C0103: Variable name "Cd" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:381:4: C0103: Variable name "Cl_sorted" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:382:4: C0103: Variable name "Cd_sorted" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:384:4: W0612: Unused variable 'fig' (unused-variable)
+src\WindTurbineModeling\plot.py:411:4: C0103: Variable name "V0" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:412:4: C0103: Variable name "M" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:434:4: C0103: Variable name "T" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:456:4: C0103: Variable name "M" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:478:4: C0103: Variable name "P" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:499:4: C0103: Variable name "T" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:520:4: C0103: Variable name "M" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:542:4: C0103: Variable name "P" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:565:4: C0103: Variable name "r" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:566:4: C0103: Variable name "V0" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:567:4: C0103: Variable name "F" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:569:4: C0103: Variable name "V0_unique" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:573:8: C0103: Variable name "v0" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:576:8: C0103: Variable name "F_v0" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:581:8: C0103: Variable name "F_v0_sorted" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:611:4: C0103: Variable name "V0" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:612:4: C0103: Variable name "cp" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:613:4: C0103: Variable name "ct" doesn't conform to snake_case naming style (invalid-name)
+src\WindTurbineModeling\plot.py:617:4: C0415: Import outside toplevel (WindTurbineModeling.config.R) (import-outside-toplevel)
+src\WindTurbineModeling\plot.py:1:0: F0002: src\WindTurbineModeling\plot.py: Fatal error while checking 'src\WindTurbineModeling\plot.py'. Please open an issue in our bug tracker so we address this. There is a pre-filled template that you can use in 'C:\Users\Dorian\AppData\Local\pylint\pylint\Cache\pylint-crash-2025-05-04-12-29-05.txt'. (astroid-error)
+************* Module WindTurbineModeling.read
+src\WindTurbineModeling\read.py:42:0: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\read.py:48:0: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\read.py:54:0: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\read.py:58:0: C0303: Trailing whitespace (trailing-whitespace)
+src\WindTurbineModeling\read.py:61:0: C0301: Line too long (106/100) (line-too-long)
+src\WindTurbineModeling\read.py:85:0: C0305: Trailing newlines (trailing-newlines)
+src\WindTurbineModeling\read.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+src\WindTurbineModeling\read.py:1:0: C0413: Import "import numpy as np" should be placed at the top of the module (wrong-import-position)   
+src\WindTurbineModeling\read.py:2:0: C0413: Import "import matplotlib.pyplot as plt" should be placed at the top of the module (wrong-import-position)
+src\WindTurbineModeling\read.py:3:0: C0413: Import "import os" should be placed at the top of the module (wrong-import-position)
+src\WindTurbineModeling\read.py:4:0: C0413: Import "import pandas as pd" should be placed at the top of the module (wrong-import-position)
+src\WindTurbineModeling\read.py:5:0: W0404: Reimport 'pandas' (imported line 4) (reimported)
+src\WindTurbineModeling\read.py:5:0: C0413: Import "import pandas as pd" should be placed at the top of the module (wrong-import-position)  
+src\WindTurbineModeling\read.py:6:0: C0413: Import "from pathlib import Path" should be placed at the top of the module (wrong-import-position)
+src\WindTurbineModeling\read.py:10:0: C0413: Import "import re" should be placed at the top of the module (wrong-import-position)
+src\WindTurbineModeling\read.py:1:0: F0002: src\WindTurbineModeling\read.py: Fatal error while checking 'src\WindTurbineModeling\read.py'. Please open an issue in our bug tracker so we address this. There is a pre-filled template that you can use in 'C:\Users\Dorian\AppData\Local\pylint\pylint\Cache\pylint-crash-2025-05-04-12-29-05.txt'. (astroid-error)
+************* Module WindTurbineModeling.__init__
+src\WindTurbineModeling\__init__.py:4:0: C0301: Line too long (109/100) (line-too-long)
+src\WindTurbineModeling\__init__.py:5:0: C0301: Line too long (109/100) (line-too-long)
+************* Module WindTurbineModeling
+src\WindTurbineModeling\__init__.py:1:0: C0103: Module name "WindTurbineModeling" doesn't conform to snake_case naming style (invalid-name) 
+src\WindTurbineModeling\__init__.py:24:0: C0413: Import "from .bem_solvers import BEMSolver, BEMSolverOpt" should be placed at the top of the module (wrong-import-position)
+src\WindTurbineModeling\__init__.py:27:0: C0413: Import "from . import read" should be placed at the top of the module (wrong-import-position)
+src\WindTurbineModeling\__init__.py:28:0: C0413: Import "from . import load" should be placed at the top of the module (wrong-import-position)
+src\WindTurbineModeling\__init__.py:29:0: C0413: Import "from . import plot" should be placed at the top of the module (wrong-import-position)
+src\WindTurbineModeling\__init__.py:30:0: C0413: Import "from . import equations" should be placed at the top of the module (wrong-import-position)
+src\WindTurbineModeling\load.py:4:0: C0411: standard import "import os" should be placed before "import pandas as pd" (wrong-import-order)
+src\WindTurbineModeling\load.py:5:0: C0411: standard import "import re" should be placed before "import pandas as pd" (wrong-import-order)  
+src\WindTurbineModeling\load.py:6:0: C0411: standard import "from io import StringIO" should be placed before "import pandas as pd" (wrong-import-order)
+src\WindTurbineModeling\plot.py:4:0: C0411: standard import "import os" should be placed before "import pandas as pd" (wrong-import-order)  
+src\WindTurbineModeling\plot.py:5:0: C0411: standard import "import re" should be placed before "import pandas as pd" (wrong-import-order)  
+src\WindTurbineModeling\plot.py:6:0: C0411: standard import "from io import StringIO" should be placed before "import pandas as pd" (wrong-import-order)
+src\WindTurbineModeling\read.py:3:0: C0411: standard import "import os" should be placed before "import pandas as pd" (wrong-import-order)  
+src\WindTurbineModeling\read.py:6:0: C0411: standard import "from pathlib import Path" should be placed before "import pandas as pd" (wrong-import-order)
+src\WindTurbineModeling\read.py:10:0: C0411: standard import "import re" should be placed before "import pandas as pd" (wrong-import-order) 
+src\WindTurbineModeling\plot.py:4:0: C0412: Imports from package os are not grouped (ungrouped-imports)
+src\WindTurbineModeling\plot.py:5:0: C0412: Imports from package re are not grouped (ungrouped-imports)
+src\WindTurbineModeling\plot.py:6:0: C0412: Imports from package io are not grouped (ungrouped-imports)
+src\WindTurbineModeling\read.py:3:0: C0412: Imports from package os are not grouped (ungrouped-imports)
+src\WindTurbineModeling\read.py:10:0: C0412: Imports from package re are not grouped (ungrouped-imports)
+src\WindTurbineModeling\plot.py:1:0: C0412: Imports from package pandas are not grouped (ungrouped-imports)
+src\WindTurbineModeling\plot.py:2:0: C0412: Imports from package numpy are not grouped (ungrouped-imports)
+src\WindTurbineModeling\plot.py:3:0: C0412: Imports from package matplotlib are not grouped (ungrouped-imports)
+src\WindTurbineModeling\read.py:1:0: C0412: Imports from package numpy are not grouped (ungrouped-imports)
+src\WindTurbineModeling\read.py:2:0: C0412: Imports from package matplotlib are not grouped (ungrouped-imports)
+src\WindTurbineModeling\read.py:4:0: C0412: Imports from package pandas are not grouped (ungrouped-imports)
+
+------------------------------------------------------------------
+Your code has been rated at 0.00/10 (previous run: 0.00/10, +0.00)
+
+
+(base) e:\46120_Scientific_Programming\final-project-stopfuckingspiders>
+
