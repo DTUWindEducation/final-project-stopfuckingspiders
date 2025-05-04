@@ -40,3 +40,16 @@ python examples/main.py
 [ADD TEXT HERE!]
 
 
+
+## Configuration
+
+- **`config.yaml`** (located in the project root):  
+  Stores all key project settings, including folder paths, turbine parameters, and numerical constants.
+
+- **`config.py`** (located in `src/WindTurbineModeling/`):  
+  Loads values from `config.yaml` and defines accessible variables for use throughout the codebase. It also sets up absolute paths relative to the project root for input and output data.
+
+## Requirements
+
+- Python 3.8+
+- Required packages are listed in `requirements.txt`
