@@ -115,3 +115,7 @@ The folder `docs` contains the official manual from the U.S. Department of Energ
   - Blade Element Momentum (BEM) theory implementation
   - Unsteady airfoil aerodynamics (Beddoes-Leishman models)
   - Configuration options for standalone and FAST-coupled simulations
+
+
+## 🔭 Future Work
+- Peer review to validate results and ensure correctness.
