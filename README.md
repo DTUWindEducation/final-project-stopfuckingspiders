@@ -75,35 +75,6 @@ src/WindTurbineModeling/
 ![Architecture Overview](examples/architecture.png)
 
 
-## ⚙️ Implemented Classes
-
-#### `BEMSolver`
-Implements a standard Blade Element Momentum (BEM) solver for calculating thrust, torque, and power across varying wind conditions.
-
-**Key Methods:**
-- `run()`: Main workflow—loads input data, runs the solver, saves results.
-- `perform_bem_calculations()`: Executes BEM computations for all conditions.
-- `calculate_single_condition()`: Solves for one wind speed condition.
-- `solve_blade_element()`: Core iterative solver for a single blade element.
-- `get_plot_data()`: Returns solver output formatted for plotting.
-- `save_results()`: Saves summary and elemental results as CSV files.
-
-#### `BEMSolverOpt`
-Extension of `BaseBEMSolver` for optimal control strategy (details not shown in current files).
-
-#### `BaseBEMSolver`
-Provides foundational methods for loading data, solving elements, and saving results. Parent class for both `BEMSolver` and `BEMSolverOpt`.
-
-#### `ResultPlotter`
-Provides an interactive CLI for:
-- Selecting and running solvers (`BEMSolver`, `BEMSolverOpt`)
-- Visualizing performance plots like Cp, Ct, thrust, power, induction factors, etc.
-- Saving results and generated figures
-
-
-#### 🧠 Notes
-- Configuration is driven by `config.yaml` loaded through `config.py`
-- All numerical methods use constants and thresholds defined in the config for consistent behavior
 
 ### Configuration
 
@@ -154,6 +125,36 @@ The folder `docs` contains the official manual from the U.S. Department of Energ
   - Blade Element Momentum (BEM) theory implementation
   - Unsteady airfoil aerodynamics (Beddoes-Leishman models)
   - Configuration options for standalone and FAST-coupled simulations
+
+
+## ⚙️ Implemented Classes
+
+#### `BEMSolver`
+Implements a standard Blade Element Momentum (BEM) solver for calculating thrust, torque, and power across varying wind conditions.
+
+**Key Methods:**
+- `run()`: Main workflow—loads input data, runs the solver, saves results.
+- `perform_bem_calculations()`: Executes BEM computations for all conditions.
+- `calculate_single_condition()`: Solves for one wind speed condition.
+- `solve_blade_element()`: Core iterative solver for a single blade element.
+- `get_plot_data()`: Returns solver output formatted for plotting.
+- `save_results()`: Saves summary and elemental results as CSV files.
+
+#### `BEMSolverOpt`
+Extension of `BaseBEMSolver` for optimal control strategy (details not shown in current files).
+
+#### `BaseBEMSolver`
+Provides foundational methods for loading data, solving elements, and saving results. Parent class for both `BEMSolver` and `BEMSolverOpt`.
+
+#### `ResultPlotter`
+Provides an interactive CLI for:
+- Selecting and running solvers (`BEMSolver`, `BEMSolverOpt`)
+- Visualizing performance plots like Cp, Ct, thrust, power, induction factors, etc.
+- Saving results and generated figures
+
+#### 🧠 Notes
+- Configuration is driven by `config.yaml` loaded through `config.py`
+- All numerical methods use constants and thresholds defined in the config for consistent behavior
 
 ## 🔭 Future Work
 - Peer review to validate results and ensure correctness.
