@@ -81,3 +81,14 @@ This folder `examples/` contains usage examples for running the Wind Turbine Mod
 - Optimal pitch and speed estimation
 - Power and thrust curve generation
 - Interactive re-execution and figure saving
+
+
+
+## Documentation
+
+The folder `docs` contains the official manual from the U.S. Department of Energy’s National Renewable Energy Laboratory (**`aerodyn_v15_user_guide_and_theory_manual.pdf`**). The document contains detailed descriptions of abbreviation of variables used in the model. Further this guide includes:
+  - Detailed descriptions of aerodynamic modeling options
+  - Input/output file specifications
+  - Blade Element Momentum (BEM) theory implementation
+  - Unsteady airfoil aerodynamics (Beddoes-Leishman models)
+  - Configuration options for standalone and FAST-coupled simulations
