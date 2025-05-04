@@ -53,3 +53,31 @@ python examples/main.py
 
 - Python 3.8+
 - Required packages are listed in `requirements.txt`
+
+
+# Wind Turbine Modeling – Examples
+
+This folder `examples/` contains usage examples for running the Wind Turbine Modeling package, including an illustrative diagrams of the simulation workflow.
+
+## Files
+
+- **`main.py`**  
+  Launches an interactive simulation interface. Allows users to choose between:
+  - Standard BEM Solver
+  - Optimal Control BEM Solver
+
+  **To run:**
+  ```bash
+  python examples/main.py
+  ```
+
+  The solver performs a complete wind turbine BEM analysis, loading geometry and performance data, and outputs key metrics like thrust, torque, and power. It also provides a suite of plotting functions for visualizing results.
+
+## Features Demonstrated
+
+- Loading and preprocessing turbine data
+- Airfoil and performance plotting
+- Induction factor calculations
+- Optimal pitch and speed estimation
+- Power and thrust curve generation
+- Interactive re-execution and figure saving
