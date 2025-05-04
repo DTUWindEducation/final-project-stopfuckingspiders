@@ -77,7 +77,7 @@ src/WindTurbineModeling/
 
 ## ⚙️ Implemented Classes
 
-### `BEMSolver` (in `bem_solvers.py`)
+#### `BEMSolver`
 Implements a standard Blade Element Momentum (BEM) solver for calculating thrust, torque, and power across varying wind conditions.
 
 **Key Methods:**
@@ -88,20 +88,20 @@ Implements a standard Blade Element Momentum (BEM) solver for calculating thrust
 - `get_plot_data()`: Returns solver output formatted for plotting.
 - `save_results()`: Saves summary and elemental results as CSV files.
 
-### `BEMSolverOpt` (in `bem_solvers.py`)
+#### `BEMSolverOpt`
 Extension of `BaseBEMSolver` for optimal control strategy (details not shown in current files).
 
-### `BaseBEMSolver` (in `bem_solvers.py`)
+#### `BaseBEMSolver`
 Provides foundational methods for loading data, solving elements, and saving results. Parent class for both `BEMSolver` and `BEMSolverOpt`.
 
-### `ResultPlotter` (in `interactive.py`)
+#### `ResultPlotter`
 Provides an interactive CLI for:
 - Selecting and running solvers (`BEMSolver`, `BEMSolverOpt`)
 - Visualizing performance plots like Cp, Ct, thrust, power, induction factors, etc.
 - Saving results and generated figures
 
 
-## 🧠 Notes
+#### 🧠 Notes
 - Configuration is driven by `config.yaml` loaded through `config.py`
 - All numerical methods use constants and thresholds defined in the config for consistent behavior
 
