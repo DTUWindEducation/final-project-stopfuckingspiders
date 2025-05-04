@@ -14,7 +14,7 @@ Key features of the package include:
 - Test coverage and documentation for maintainability and reproducibility.
 
 
-## 🚀 Quickstart
+## Quickstart
 
 Follow these steps to get up and running with the project.
 
@@ -56,7 +56,7 @@ conda activate WindTurbines
 python examples/main.py
 ```
 
-## 📁 Package Architecture
+## Package Architecture
 
 This package follows a modular design to cleanly separate data handling, computation, and visualization:
 
@@ -127,7 +127,7 @@ The folder `docs` contains the official manual from the U.S. Department of Energ
   - Configuration options for standalone and FAST-coupled simulations
 
 
-## ⚙️ Implemented Classes
+## Implemented Classes
 
 #### `BEMSolver`
 Implements a standard Blade Element Momentum (BEM) solver for calculating thrust, torque, and power across varying wind conditions.
@@ -152,9 +152,12 @@ Provides an interactive CLI for:
 - Visualizing performance plots like Cp, Ct, thrust, power, induction factors, etc.
 - Saving results and generated figures
 
-#### 🧠 Notes
+#### Notes
 - Configuration is driven by `config.yaml` loaded through `config.py`
 - All numerical methods use constants and thresholds defined in the config for consistent behavior
+
+## Collaboration
+The project was contributed on equally between all team members. All team members worked on their own branches, and then discussed and compared results over numerous team meetings. During the team meetings, the group live coded the final solutions, which were then pulled to the main branch.
 
 ## 🔭 Future Work
 - Peer review to validate results and ensure correctness.
