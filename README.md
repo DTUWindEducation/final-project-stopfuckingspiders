@@ -18,16 +18,16 @@ Key features of the package include:
 
 Follow these steps to get up and running with the project.
 
-## 1. Clone the Repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/DTUWindEducation/final-project-stopfuckingspiders.git
 cd final-project-stopfuckingspiders
 ```
 
-## 2. Create and Activate a Virtual Environment (Optional but Recommended)
+### 2. Create and Activate a Virtual Environment (Optional but Recommended)
 
-### Using `venv` (Python 3.x):
+#### Using `venv` (Python 3.x):
 
 ```bash
 python3 -m venv venv
@@ -35,13 +35,13 @@ source venv/bin/activate     # On Linux/macOS
 venv\Scripts\activate        # On Windows
 ```
 
-## 3. Install Requirements
+### 3. Install Requirements
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 💡 Using Conda?
+#### 💡 Using Conda?
 
 If you are using [Conda](https://docs.conda.io/), you can install dependencies from an `environment.yml` file:
 
@@ -50,7 +50,7 @@ conda env create -f environment.yml
 conda activate WindTurbines
 ```
 
-## 4. Run the Project (Example)
+### 4. Run the Project (Example)
 
 ```bash
 python examples/main.py
