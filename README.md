@@ -152,7 +152,7 @@ Implements a standard Blade Element Momentum (BEM) solver for calculating thrust
 - `save_results()`: Saves summary and elemental results as CSV files.
 
 #### `BEMSolverOpt`
-Extension of `BaseBEMSolver` for optimal control strategy (details not shown in current files).
+Extension of `BaseBEMSolver` for optimal control strategy.
 
 #### `BaseBEMSolver`
 Provides foundational methods for loading data, solving elements, and saving results. Parent class for both `BEMSolver` and `BEMSolverOpt`.
