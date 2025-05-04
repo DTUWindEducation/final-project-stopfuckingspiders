@@ -28,7 +28,7 @@ cd final-project-stopfuckingspiders
 ### 2. Pip install
 
 ```bash
- pip install -e
+ pip install -e .
 ```
 
 ### 3. Run the Project (Example)
