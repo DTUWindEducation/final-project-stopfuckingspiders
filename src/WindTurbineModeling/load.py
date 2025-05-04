@@ -1,11 +1,7 @@
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import os
-import re
-from io import StringIO
 from typing import Union
 from pathlib import Path
+import pandas as pd
+import numpy as np
 
 def load_blade_geometry(filepath: Union[str, Path]) -> pd.DataFrame:
     """
@@ -42,7 +38,7 @@ def load_blade_geometry(filepath: Union[str, Path]) -> pd.DataFrame:
 
 def load_operational_settings(filepath: Union[str, Path]) -> pd.DataFrame:
     """
-    Load the operational conditions for the wind turbine (e.g., wind speed, pitch, RPM).
+    Load the operational conditions for the wind turbine.
 
     Parameters
     ----------
@@ -52,7 +48,8 @@ def load_operational_settings(filepath: Union[str, Path]) -> pd.DataFrame:
     Returns
     -------
     pd.DataFrame
-        DataFrame with columns: WindSpeed, PitchAngle, RotSpeed, AeroPower, AeroThrust.
+        DataFrame with columns: WindSpeed, PitchAngle, 
+        RotSpeed, AeroPower, AeroThrust.
     """
     df = pd.read_csv(
         filepath,

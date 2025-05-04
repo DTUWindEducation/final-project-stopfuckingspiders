@@ -4,11 +4,9 @@ Loading modules
 import sys
 import os
 from pathlib import Path
-from time import time
 import numpy as np
 import pandas as pd
 from collections import defaultdict
-import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from scipy.signal import savgol_filter
 
@@ -38,14 +36,7 @@ try:
         compute_totals_and_coefficients,
         interpolate_blade_geometry
     )
-    from WindTurbineModeling.plot import (
-        plot_power_curve,
-        plot_cp_curve,
-        plot_ct_curve,
-        plot_thrust_curve,
-        plot_airfoil_shapes,
-        plot_wind_turbine
-    )
+
     from WindTurbineModeling.config import (
         BLADE_DEFINITION_INPUT_FILE_PATH,
         OPERATIONAL_CONDITIONS_FILE_PATH,
@@ -101,7 +92,7 @@ class BaseBEMSolver:
         Returns:
             dict: A dictionary containing all processed input data.
         """
-     
+
         blade_data = load_blade_geometry(BLADE_DEFINITION_INPUT_FILE_PATH)
         blade_data = blade_data[blade_data["BlAFID"] > 1].reset_index(drop=True)
 

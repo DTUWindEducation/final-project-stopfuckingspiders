@@ -23,7 +23,8 @@ def calc_omega(rot_speed_rpm: float) -> float:
     return rot_speed_rpm * (2 * np.pi / 60)
 
 
-def calc_flow_angle(V_0: float, omega: float, r: float, a: float, a_prime: float) -> float:
+def calc_flow_angle(V_0: float, omega: float, r: float,
+                    a: float, a_prime: float) -> float:
     """
     Calculate the flow angle for a wind turbine blade element.
 
@@ -40,7 +41,8 @@ def calc_flow_angle(V_0: float, omega: float, r: float, a: float, a_prime: float
     return np.arctan(((1 - a) * V_0) / ((1 + a_prime) * omega * r))
 
 
-def calc_local_angle_of_attack(phi_rad: float, theta_p_deg: float, beta_deg: float) -> float:
+def calc_local_angle_of_attack(phi_rad: float,
+                               theta_p_deg: float, beta_deg: float) -> float:
     """
     Calculates the local angle of attack for a wind turbine blade.
 
@@ -55,20 +57,29 @@ def calc_local_angle_of_attack(phi_rad: float, theta_p_deg: float, beta_deg: flo
     return np.degrees(phi_rad) - (theta_p_deg + beta_deg)
 
 
-def interpolate_blade_geometry(r: float, BlSpn: np.ndarray, BlTwist: np.ndarray, BlChord: np.ndarray) -> Tuple[float, float]:
+def interpolate_blade_geometry(r: float, BlSpn: np.ndarray,
+                               BlTwist: np.ndarray,
+                               BlChord: np.ndarray) -> Tuple[float, float]:
     """
-    Interpolates the blade geometry parameters (twist angle and chord length) at a given radial position.
+    Interpolates the blade geometry parameters
+    (twist angle and chord length) at a given radial position.
 
     Parameters:
-        r (float): The radial position along the blade where interpolation is performed.
-        BlSpn (np.ndarray): Array of radial positions (spanwise locations) along the blade.
-        BlTwist (np.ndarray): Array of twist angles corresponding to the radial positions in BlSpn.
-        BlChord (np.ndarray): Array of chord lengths corresponding to the radial positions in BlSpn.
+        r (float): The radial position along the blade
+        where interpolation is performed.
+        BlSpn (np.ndarray): Array of radial positions
+        (spanwise locations) along the blade.
+        BlTwist (np.ndarray): Array of twist angles corresponding
+        to the radial positions in BlSpn.
+        BlChord (np.ndarray): Array of chord lengths corresponding
+        to the radial positions in BlSpn.
 
     Returns:
         Tuple[float, float]: A tuple containing:
-            - beta (float): The interpolated twist angle at the given radial position.
-            - chord (float): The interpolated chord length at the given radial position.
+            - beta (float): The interpolated twist angle
+            at the given radial position.
+            - chord (float): The interpolated chord length
+            at the given radial position.
     """
     beta = np.interp(r, BlSpn, BlTwist)
     chord = np.interp(r, BlSpn, BlChord)
@@ -79,15 +90,21 @@ def calc_local_lift_drag_force(alpha: float, df_polar: dict) -> Tuple[float, flo
     """
     Calculate the local lift and drag coefficients for a given angle of attack.
 
-    This function interpolates the lift coefficient (Cl) and drag coefficient (Cd)
-    from the provided polar data dictionary based on the given angle of attack (alpha).
+    This function interpolates the lift coefficient
+    (Cl) and drag coefficient (Cd)
+    from the provided polar data dictionary based on
+    the given angle of attack (alpha).
 
     Parameters:
         alpha (float): The angle of attack in degrees.
-        df_polar (dict): A dictionary containing polar data with the following keys:
-            - "Alpha (deg)": List or array of angles of attack in degrees.
-            - "Cl": List or array of lift coefficients corresponding to the angles of attack.
-            - "Cd": List or array of drag coefficients corresponding to the angles of attack.
+        df_polar (dict): A dictionary containing polar
+        data with the following keys:
+            - "Alpha (deg)": List or array of angles
+            of attack in degrees.
+            - "Cl": List or array of lift coefficients
+            corresponding to the angles of attack.
+            - "Cd": List or array of drag coefficients
+            corresponding to the angles of attack.
 
     Returns:
         Tuple[float, float]: A tuple containing:
@@ -99,9 +116,12 @@ def calc_local_lift_drag_force(alpha: float, df_polar: dict) -> Tuple[float, flo
     return Cl, Cd
 
 
-def calc_normal_tangential_constants(phi_rad: float, C_l: float, C_d: float) -> Tuple[float, float]:
+def calc_normal_tangential_constants(phi_rad: float,
+                                     C_l: float,
+                                     C_d: float) -> Tuple[float, float]:
     """
-    Calculate the normal and tangential force coefficients for a wind turbine blade element.
+    Calculate the normal and tangential force coefficients
+    for a wind turbine blade element.
 
     Parameters:
     ----------
@@ -135,7 +155,8 @@ def calc_local_solidity(NUMBER_BLADES: int, chord: float, r: float) -> float:
     chord : float
         The chord length of the blade section (in meters).
     r : float
-        The radial distance from the center of the rotor to the blade section (in meters).
+        The radial distance from the center of the rotor
+        to the blade section (in meters).
 
     Returns:
     -------
@@ -147,9 +168,9 @@ def calc_local_solidity(NUMBER_BLADES: int, chord: float, r: float) -> float:
 
 def calc_prandtl_tip_loss(B: int, R: float, r: float, phi: float) -> float:
     """
-    This function calculates the correction factor for the loss of lift 
-    at the blade tips of a wind turbine, based on Prandtl's tip loss model. 
-    The correction factor is used in blade element momentum (BEM) theory 
+    This function calculates the correction factor for the loss of lift
+    at the blade tips of a wind turbine, based on Prandtl's tip loss model.
+    The correction factor is used in blade element momentum (BEM) theory
     to account for the finite number of blades and the effects of tip vortices.
 
     Parameters:
@@ -166,17 +187,17 @@ def calc_prandtl_tip_loss(B: int, R: float, r: float, phi: float) -> float:
     --------
     float
         Prandtl's tip loss correction factor, a value between 0 and 1.
-        A value closer to 1 indicates minimal tip loss, while a value closer 
+        A value closer to 1 indicates minimal tip loss, while a value closer
         to 0 indicates significant tip loss.
     """
     sin_phi = np.sin(phi)
-    
+
     # Avoid divide-by-zero
     if r <= 0 or sin_phi <= 0:
         return 1e-3  # minimal correction, avoid NaNs
 
     f_tip = (B / 2.0) * (R - r) / (r * sin_phi)
-    
+
     # Now compute the exponential term safely
     exp_term = np.exp(-f_tip)
 
@@ -188,22 +209,32 @@ def calc_prandtl_tip_loss(B: int, R: float, r: float, phi: float) -> float:
     return np.clip(F, 1e-3, 1.0)
 
 
-def update_induction_factors(phi_rad: float, sigma: float, C_n: float, C_t: float, F: float, a_old: float, corr: float = 0.1, eps: float = 1e-6) -> Tuple[float, float]:
+def update_induction_factors(phi_rad: float, sigma: float,
+                             C_n: float, C_t: float, F: float,
+                             a_old: float, corr: float = 0.1,
+                             eps: float = 1e-6) -> Tuple[float, float]:
     """
-    Update the axial and tangential induction factors for a wind turbine blade element.
-    This function calculates the new axial (`a_new`) and tangential (`a_prime_new`) induction factors
-    based on the blade element's angle of attack, solidity, aerodynamic coefficients, and other parameters.
-    The calculation uses a relaxation factor (`corr`) to ensure numerical stability.
+    Update the axial and tangential induction factors for a
+    wind turbine blade element.
+    This function calculates the new axial (`a_new`) and
+    tangential (`a_prime_new`) induction factors
+    based on the blade element's angle of attack, solidity,
+    aerodynamic coefficients, and other parameters.
+    The calculation uses a relaxation factor (`corr`) to
+    ensure numerical stability.
 
     Parameters:
         phi_rad (float): Angle of attack in radians.
-        sigma (float): Local solidity of the blade element (ratio of blade area to swept area).
+        sigma (float): Local solidity of the blade element
+        (ratio of blade area to swept area).
         C_n (float): Normal force coefficient.
         C_t (float): Tangential force coefficient.
         F (float): Prandtl's tip loss factor.
         a_old (float): Previous axial induction factor.
-        corr (float, optional): Relaxation factor for updating the induction factors. Default is 0.1.
-        eps (float, optional): Small value to avoid division by zero. Default is 1e-6.
+        corr (float, optional): Relaxation factor for updating
+        the induction factors. Default is 0.1.
+        eps (float, optional): Small value to avoid division by zero.
+        Default is 1e-6.
     Returns:
         Tuple[float, float]: A tuple containing:
             - a_new (float): Updated axial induction factor.
@@ -219,7 +250,8 @@ def update_induction_factors(phi_rad: float, sigma: float, C_n: float, C_t: floa
         CT = ((1 - a_old)**2) * C_n * sigma / (sin_phi_sq + eps)
         a_star = CT / (4 * F * (1 - 0.25 * (5 - 3 * a_old) * a_old) + eps)
 
-    a_prime_star = (1 - a_old) * sigma * C_t / (4 * F * sin_phi * cos_phi + eps)
+    a_prime_star = (1 - a_old) * sigma * C_t / (4 * F *
+                                                sin_phi * cos_phi + eps)
 
     a_new = corr * a_star + (1 - corr) * a_old
     a_prime_new = corr * a_prime_star + (1 - corr) * a_prime_star
@@ -227,9 +259,13 @@ def update_induction_factors(phi_rad: float, sigma: float, C_n: float, C_t: floa
     return a_new, a_prime_new
 
 
-def calc_relative_velocity_and_forces(V_0: float, omega: float, r: float, a: float, a_prime: float, RHO: float, chord: float, Cn: float, Ct: float) -> Tuple[float, float, float]:
+def calc_relative_velocity_and_forces(V_0: float, omega: float,
+                                      r: float, a: float, a_prime: float,
+                                      RHO: float, chord: float, Cn: float,
+                                      Ct: float) -> Tuple[float, float, float]:
     """
-    Calculate the relative velocity and aerodynamic forces on a wind turbine blade element.
+    Calculate the relative velocity and aerodynamic forces on
+    a wind turbine blade element.
 
     Parameters:
         V_0 (float): Free-stream wind velocity (m/s).
@@ -244,9 +280,12 @@ def calc_relative_velocity_and_forces(V_0: float, omega: float, r: float, a: flo
 
     Returns:
         Tuple[float, float, float]: A tuple containing:
-            - v_rel (float): Relative velocity at the blade element (m/s).
-            - p_n (float): Normal force per unit length on the blade element (N/m).
-            - p_t (float): Tangential force per unit length on the blade element (N/m).
+            - v_rel (float): Relative velocity at the blade
+            element (m/s).
+            - p_n (float): Normal force per unit length on the
+            blade element (N/m).
+            - p_t (float): Tangential force per unit length on
+            the blade element (N/m).
     """
     tangential = omega * r * (1 + a_prime)
     axial = V_0 * (1 - a)
@@ -257,7 +296,9 @@ def calc_relative_velocity_and_forces(V_0: float, omega: float, r: float, a: flo
     return v_rel, p_n, p_t
 
 
-def compute_local_thrust(r_series: np.ndarray, V_0: float, a_series: np.ndarray, RHO: float, dr: float) -> np.ndarray:
+def compute_local_thrust(r_series: np.ndarray, V_0: float,
+                         a_series: np.ndarray, RHO: float,
+                         dr: float) -> np.ndarray:
     """
     Compute the local thrust distribution along the blade of a wind turbine.
 
@@ -282,9 +323,11 @@ def compute_local_thrust(r_series: np.ndarray, V_0: float, a_series: np.ndarray,
     return 4 * np.pi * r_series * RHO * V_0**2 * a_series * (1 - a_series) * dr
 
 
-def compute_rotor_coefficients(T: float, P: float, RHO: float, R: float, V_0: float) -> Tuple[float, float]:
+def compute_rotor_coefficients(T: float, P: float, RHO: float,
+                               R: float, V_0: float) -> Tuple[float, float]:
     """
-    Compute the rotor power coefficient (CP) and thrust coefficient (CT) for a wind turbine.
+    Compute the rotor power coefficient (CP) and thrust
+    coefficient (CT) for a wind turbine.
 
     Parameters:
         T (float): Thrust force on the rotor (in Newtons).
@@ -305,19 +348,25 @@ def compute_rotor_coefficients(T: float, P: float, RHO: float, R: float, V_0: fl
     return CP, CT
 
 
-def compute_totals_and_coefficients(dT: np.ndarray, dM: np.ndarray, omega: float, r_used: np.ndarray, RHO: float, R: float, V_0: float, RATED_POWER: float) -> Tuple[float, float, float, float, float]:
+def compute_totals_and_coefficients(dT: np.ndarray, dM: np.ndarray,
+                                    omega: float, r_used: np.ndarray,
+                                    RHO: float, R: float, V_0: float,
+                                    RATED_POWER: float):
     """
-    Compute the total thrust, torque, power, and aerodynamic coefficients for a wind turbine.
-    This function integrates the distributed thrust and torque over the blade span to calculate
-    the total thrust (T) and torque (M). It then computes the total power (P_total) generated by
-    the turbine, ensuring it does not exceed the rated power. Additionally, it calculates the
-    power coefficient (CP) and thrust coefficient (CT) based on the wind turbine's performance.
-    
+    Compute the total thrust, torque, power, and aerodynamic coefficients
+    for a wind turbine. This function integrates the distributed thrust and
+    torque over the blade span to calculate the total thrust (T) and
+    torque (M). It then computes the total power (P_total) generated by the
+    turbine, ensuring it does not exceed the rated power. Additionally,
+    it calculates the power coefficient (CP) and thrust coefficient
+    (CT) based on the wind turbine's performance.
+
     Parameters:
         dT (np.ndarray): Distributed thrust values along the blade span.
         dM (np.ndarray): Distributed torque values along the blade span.
         omega (float): Angular velocity of the turbine (rad/s).
-        r_used (np.ndarray): Radial positions along the blade span where dT and dM are defined.
+        r_used (np.ndarray): Radial positions along the blade span
+        where dT and dM are defined.
         RHO (float): Air density (kg/m^3).
         R (float): Rotor radius (m).
         V_0 (float): Free-stream wind velocity (m/s).
@@ -326,7 +375,8 @@ def compute_totals_and_coefficients(dT: np.ndarray, dM: np.ndarray, omega: float
         Tuple[float, float, float, float, float]:
             - T (float): Total thrust (N).
             - M (float): Total torque (Nm).
-            - P_total (float): Total power generated by the turbine (W), capped at the rated power.
+            - P_total (float): Total power generated by the turbine (W),
+            capped at the rated power.
             - CP (float): Power coefficient, a measure of turbine efficiency.
             - CT (float): Thrust coefficient, a measure of aerodynamic loading.
     """
@@ -344,35 +394,42 @@ def compute_totals_and_coefficients(dT: np.ndarray, dM: np.ndarray, omega: float
     return T, M, P_total, CP, CT
 
 
-def calculate_optimal_strategy(operational_data: Optional[np.ndarray] = None) -> Tuple[Callable[[float], float], Callable[[float], float], float, float]:
+def calculate_optimal_strategy(operational_data:
+                               Optional[np.ndarray] = None):
     """
-    Calculate the optimal pitch and RPM strategies for a wind turbine based on operational data.
-    This function processes operational data to generate interpolation functions for pitch and RPM
-    as a function of wind speed. If no data is provided, it loads default operational settings.
+    Calculate the optimal pitch and RPM strategies for a wind turbine based
+    on operational data. This function processes operational data to generate
+    interpolation functions for pitch and RPM as a function of wind speed.
+    If no data is provided, it loads default operational settings.
 
     Parameters:
-        operational_data (Optional[np.ndarray]): A 2D numpy array where each row represents a data point
-            with columns corresponding to wind speed, pitch, and RPM, respectively. If None, default
-            operational settings will be loaded.
+        operational_data (Optional[np.ndarray]): A 2D numpy array where each
+        row represents a data point with columns corresponding to wind speed,
+        pitch, and RPM, respectively. If None, default operational settings
+        will be loaded.
     Returns:
-        Tuple[Callable[[float], float], Callable[[float], float], float, float]:
-            - pitch_fn (Callable[[float], float]): Interpolation function for pitch as a function of wind speed.
-            - rpm_fn (Callable[[float], float]): Interpolation function for RPM as a function of wind speed.
-            - min_wind_speed (float): The minimum wind speed in the operational data.
-            - max_wind_speed (float): The maximum wind speed in the operational data.
+        Tuple
+            - pitch_fn (Callable[[float], float]): Interpolation function
+            for pitch as a function of wind speed.
+            - rpm_fn (Callable[[float], float]): Interpolation function
+              for RPM as a function of wind speed.
+            - min_wind_speed (float): The minimum wind speed in the
+            operational data.
+            - max_wind_speed (float): The maximum wind speed in the
+            operational data.
     """
     # Load data if not provided
     if operational_data is None:
         operational_data = load_operational_settings()
-    
+
     # Extract columns
     wind_speeds = operational_data[:, 0]
     pitch = operational_data[:, 1]
     rpm = operational_data[:, 2]
-    
+
     # Process pitch curve
     pitch_smoothed = savgol_filter(pitch, window_length=5, polyorder=2)
-    
+
     # Create interpolation functions
     pitch_fn = interp1d(
         wind_speeds, pitch_smoothed,
@@ -380,12 +437,12 @@ def calculate_optimal_strategy(operational_data: Optional[np.ndarray] = None) ->
         bounds_error=False,
         fill_value=(pitch_smoothed[0], pitch_smoothed[-1])
     )
-    
+
     rpm_fn = interp1d(
         wind_speeds, rpm,
         kind='linear',
         bounds_error=False,
         fill_value=(rpm[0], rpm[-1])
     )
-    
+
     return pitch_fn, rpm_fn, wind_speeds.min(), wind_speeds.max()
