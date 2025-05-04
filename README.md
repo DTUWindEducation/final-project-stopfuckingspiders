@@ -140,5 +140,5 @@ Provides an interactive CLI for:
 ## Collaboration
 The project was contributed on equally between all team members. All team members worked on their own branches, and then discussed and compared results over numerous team meetings. During the team meetings, the group live coded the final solutions, which were then pulled to the main branch.
 
-## 🔭 Future Work
+## Future Work
 - Peer review to validate results and ensure correctness.
