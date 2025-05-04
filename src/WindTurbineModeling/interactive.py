@@ -6,27 +6,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from WindTurbineModeling.bem_solvers import BEMSolver, BEMSolverOpt
 from WindTurbineModeling.config import RATED_POWER, NUMBER_BLADES, R
-from WindTurbineModeling.plot import (
-    plot_induction_vs_span,
-    plot_induction_vs_v0,
-    plot_induction_vs_pitch,
-    plot_induction_vs_omega,
-    plot_cl_cd_vs_span,
-    plot_cl_cd_vs_alpha,
-    plot_moment_vs_v0,
-    plot_thrust_vs_pitch,
-    plot_moment_vs_pitch,
-    plot_power_vs_pitch,
-    plot_thrust_vs_omega,
-    plot_moment_vs_omega,
-    plot_power_vs_omega,
-    plot_power_curve,
-    plot_thrust_curve,
-    plot_airfoil_shapes,   
-    plot_wind_turbine,
-    plot_tip_loss_vs_span,   
-    plot_cp_ct_surfaces    
-)
+from WindTurbineModeling.plot import *
 
 class ResultPlotter:
     def __init__(self):
